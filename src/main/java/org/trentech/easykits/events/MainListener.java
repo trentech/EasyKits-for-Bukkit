@@ -1,9 +1,8 @@
 package org.trentech.easykits.events;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,9 +19,11 @@ import org.bukkit.inventory.ItemStack;
 import org.trentech.easykits.Book;
 import org.trentech.easykits.Main;
 import org.trentech.easykits.kits.Kit;
-import org.trentech.easykits.kits.KitUser;
+import org.trentech.easykits.kits.KitService;
+import org.trentech.easykits.kits.KitUsage;
 import org.trentech.easykits.sql.SQLPlayers;
 import org.trentech.easykits.utils.Notifications;
+import org.trentech.easykits.utils.Utils;
 
 public class MainListener implements Listener {
 
@@ -44,7 +45,7 @@ public class MainListener implements Listener {
 			return;
 		}
 		
-		Optional<Kit> optionalKit = Kit.get(kitName);
+		Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
 		
 		if(!optionalKit.isPresent()) {
 			Main.getPlugin().getLogger().warning(ChatColor.RED + "Could not give new player kit because " + kitName + " does not exist.");
@@ -52,15 +53,7 @@ public class MainListener implements Listener {
 		}
 		Kit kit = optionalKit.get();
 
-		
-		KitUser kitUser = new KitUser(player, kit);
-		try {
-			kitUser.applyKit();
-			Notifications notify = new Notifications("New-Player-Kit", null, null, 0, null, 0);
-			player.sendMessage(notify.getMessage());
-		} catch (Exception e) {
-			Main.getPlugin().getLogger().severe(e.getMessage());
-		}
+		KitService.instance().setKit(player, kit, true);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -74,20 +67,18 @@ public class MainListener implements Listener {
 		Player player = (Player) event.getWhoClicked();
 		if(event.getSlot() == 44){
 			String kitName = event.getView().getTitle().replace("EasyKits: ", "").toLowerCase();
-			Kit kit = new Kit(kitName);
-			if(!kit.exists()){
-				Notifications notify = new Notifications("Kit-Not-Exist", kit.getName(), player.getName(), 0, null, 0);
+
+			Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
+			if(!optionalKit.isPresent()){
+				Notifications notify = new Notifications("Kit-Not-Exist", kitName, player.getName(), 0, null, 0);
 				player.sendMessage(notify.getMessage());
 				return;
 			}
+			Kit kit = optionalKit.get();
 			
-			KitUser kitUser = new KitUser(player, kit);
-			try {	
-				player.closeInventory();
-				kitUser.applyKit();
-			} catch (Exception e) {
-				Main.getPlugin().getLogger().severe(e.getMessage());
-			}
+			player.closeInventory();
+			
+			KitService.instance().setKit(player, kit, true);
 		}else if(event.getSlot() == 43){
 			if(event.getInventory().getItem(event.getSlot()) == null){
 				return;
@@ -140,14 +131,14 @@ public class MainListener implements Listener {
 		String kitName = event.getCurrentItem().getItemMeta().getDisplayName().replace("EasyKits: ", "").toLowerCase();
 		event.setCancelled(true);
 
-		Kit kit = new Kit(kitName);
-		
-		if(!kit.exists()){
-			Notifications notify = new Notifications("Kit-Not-Exist", kit.getName(), player.getName(), 0, null, 0);
+		Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
+		if(!optionalKit.isPresent()){
+			Notifications notify = new Notifications("Kit-Not-Exist", kitName, player.getName(), 0, null, 0);
 			player.sendMessage(notify.getMessage());
 			return;
 		}
-		
+		Kit kit = optionalKit.get();
+
 		Book.pageTwo(player, kit);
 	
 	}
@@ -170,92 +161,94 @@ public class MainListener implements Listener {
 		Book.pageOne(player);
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onKitEquipEvent(KitPlayerEquipEvent event) {
-		Kit kit = event.getKit();
+	@EventHandler
+	public void onKitEventEventGet(KitEvent.Get event) {
 		Player player = event.getPlayer();
-		KitUser kitUser = event.getKitUser();
+		Kit kit = event.getKit();
 		
-		if(!(player.hasPermission("EasyKits.kits." + kit.getName()) || player.hasPermission("EasyKits.kits.*"))){
-			Notifications notify = new Notifications("Permission-Denied", null, null, 0, null, 0);
-			player.sendMessage(notify.getMessage());
+		if(!player.hasPermission("easykits.kit." + kit.getName())) {
+			player.sendMessage(ChatColor.RED + "You do not have permission to get " + kit.getName());
 			event.setCancelled(true);
 			return;
 		}
-		
-		if(!event.getPlayer().hasPermission("EasyKits.bypass.cooldown")){
-			if((kitUser.getCooldownTimeRemaining() != null) && (kit.getCooldown() != null)){
-				Notifications notify = new Notifications("Get-Cooldown", event.getKit().getName(), null, 0, kitUser.getCooldownTimeRemaining(), 0);
-				player.sendMessage(notify.getMessage());
+
+		KitUsage kitUsage;
+		Optional<KitUsage> optionalKitUsage = SQLPlayers.getKitUsage(player, kit.getName());
+		if(optionalKitUsage.isPresent()) {
+			kitUsage = optionalKitUsage.get();
+		} else {
+			kitUsage = new KitUsage(kit.getName());
+		}
+
+		if(!player.hasPermission("easykits.override.cooldown")) {
+			Date date = kitUsage.getDate();
+			
+			long timeSince = TimeUnit.MILLISECONDS.toSeconds(new Date().getTime() - date.getTime());
+			long waitTime = kit.getCooldown();
+			
+			if(waitTime - timeSince > 0) {	
+				player.sendMessage(ChatColor.RED + "You must wait " + Utils.getReadableTime(waitTime - timeSince));
 				event.setCancelled(true);
 				return;
 			}
 		}
 
-		if(!event.getPlayer().hasPermission("EasyKits.bypass.limit")){
-			if((kit.getLimit() != 0) && (kitUser.getCurrentLimit() == 0)){
-				Notifications notify = new Notifications("Get-Kit-Limit", kit.getName(), null, 0, null, kit.getLimit());
-				player.sendMessage(notify.getMessage());
-				event.setCancelled(true);
-				return;
+		if(!player.hasPermission("easykits.override.limit")) {
+			if(kit.getLimit() > 0) {
+				if(kitUsage.getTimesUsed() >= kit.getLimit()) {
+					player.sendMessage(ChatColor.RED + "You've reached the max number of this kit you can get.");
+					event.setCancelled(true);
+					return;
+				}
 			}
 		}
 		
-		if(!event.getPlayer().hasPermission("EasyKits.bypass.price")){
-			if(!kitUser.canAfford()){
-				Notifications notify = new Notifications("Insufficient-Funds", kit.getName(), null, kit.getPrice(), kitUser.getCooldownTimeRemaining(), 0);
-				player.sendMessage(notify.getMessage());
-				event.setCancelled(true);
-			    return;
+		if(!player.hasPermission("easykits.override.price")) {
+			if(kit.getPrice() > 0){				
+				if(Main.getPlugin().getEconomy().getBalance(player) < kit.getPrice()){
+					player.sendMessage(ChatColor.RED + "You do not have enough money. Requires " + Main.getPlugin().getConfig().getString("config.currency-symbol") + kit.getPrice());
+					event.setCancelled(true);
+					return;
+				}
+				
+				Main.getPlugin().getEconomy().withdrawPlayer(player, kit.getPrice());
 			}
 		}
-		
-		Date date = new Date();
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String dateObtained = dateFormat.format(date).toString();
-		kitUser.setDateObtained(dateObtained);
-		
-		kitUser.setCurrentLimit((kitUser.getCurrentLimit() - 1));
-		
-		kitUser.chargeUser();
-
-		Notifications notify = new Notifications("Kit-Obtained", kit.getName(), null, 0, null, 0);
-		player.sendMessage(notify.getMessage());
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onKitCooldownEvent(KitPlayerCooldownEvent event) {
-		if(event.getPlayer().hasPermission("EasyKits.bypass.cooldown")){
-			event.setCancelled(true);
-			return;
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onKitLimitEvent(KitPlayerLimitEvent event) {
-		if(event.getPlayer().hasPermission("EasyKits.bypass.limit")){
-			event.setCancelled(true);
-	        return;
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onWithdrawMoneyEvent(WithdrawMoneyEvent event) {
-		if(event.getPlayer().hasPermission("EasyKits.bypass.price")){
-			event.setCancelled(true);
-    		return;
-		}
-		if(!Main.getPlugin().supportsEconomy()){
-			event.setCancelled(true);
-    		return;
-		}
-		if(event.getKit().getPrice() == 0){
-			event.setCancelled(true);
-    		return;
-		}
-		Notifications notify = new Notifications("Get-Price", event.getKit().getName(), null, event.getKit().getPrice(), event.getKitUser().getCooldownTimeRemaining(), 0);
-		event.getPlayer().sendMessage(notify.getMessage());
-	}	
+//	@EventHandler(priority = EventPriority.MONITOR)
+//	public void onKitCooldownEvent(KitPlayerCooldownEvent event) {
+//		if(event.getPlayer().hasPermission("EasyKits.bypass.cooldown")){
+//			event.setCancelled(true);
+//			return;
+//		}
+//	}
+//	
+//	@EventHandler(priority = EventPriority.MONITOR)
+//	public void onKitLimitEvent(KitPlayerLimitEvent event) {
+//		if(event.getPlayer().hasPermission("EasyKits.bypass.limit")){
+//			event.setCancelled(true);
+//	        return;
+//		}
+//	}
+//	
+//	@EventHandler(priority = EventPriority.MONITOR)
+//	public void onWithdrawMoneyEvent(WithdrawMoneyEvent event) {
+//		if(event.getPlayer().hasPermission("EasyKits.bypass.price")){
+//			event.setCancelled(true);
+//    		return;
+//		}
+//		if(!Main.getPlugin().supportsEconomy()){
+//			event.setCancelled(true);
+//    		return;
+//		}
+//		if(event.getKit().getPrice() == 0){
+//			event.setCancelled(true);
+//    		return;
+//		}
+//		Notifications notify = new Notifications("Get-Price", event.getKit().getName(), null, event.getKit().getPrice(), event.getKitUser().getCooldownTimeRemaining(), 0);
+//		event.getPlayer().sendMessage(notify.getMessage());
+//	}	
 	
 	// FIX BUKKIT STUPIDITY
 	@EventHandler(priority = EventPriority.LOWEST)

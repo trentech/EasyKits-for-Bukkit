@@ -46,9 +46,37 @@ public class CMDCooldown {
 		}
 	}	
 	
-	private static boolean isValid(String[] args){
-		int loop = 0;	
-		for(String arg : args) {
+	public static long getTimeInSeconds(String time){
+		if(time.equalsIgnoreCase("0")) {
+			return 0;
+		}
+		
+		long seconds = 0;
+		
+		for(String arg : time.split(",")){
+			if(arg.matches("(\\d+)[s]$")){
+				seconds = Integer.parseInt(arg.replace("s", "")) + seconds;
+			}else if(arg.matches("(\\d+)[m]$")){
+				seconds = (Integer.parseInt(arg.replace("m", "")) * 60) + seconds;
+			}else if(arg.matches("(\\d+)[h]$")){
+				seconds = (Integer.parseInt(arg.replace("h", "")) * 3600) + seconds;
+			}else if(arg.matches("(\\d+)[d]$")){
+				seconds = (Integer.parseInt(arg.replace("d", "")) * 86400) + seconds;
+			}else if(arg.matches("(\\d+)[w]$")){
+				seconds = (Integer.parseInt(arg.replace("w", "")) * 604800) + seconds;
+			}
+		}
+		return seconds;
+	}
+	
+	private static boolean isValid(String time){
+		if(time.equalsIgnoreCase("0")) {
+			return true;
+		}
+		
+		int loop = 0;
+		
+		for(String arg : time.split(",")) {
 			if(arg.matches("(\\d+)[w]$") && loop == 0) {
 				
 			}else if(arg.matches("(\\d+)[d]$") && (loop == 0 || loop == 1)) {
@@ -59,8 +87,6 @@ public class CMDCooldown {
 				
 			}else if(arg.matches("(\\d+)[s]$") && (loop == 0 || loop == 1 || loop == 2 || loop == 3 || loop == 4)) {
 				
-			}else if(arg.equalsIgnoreCase("0") && args.length == 1) {
-				return true;
 			}else{
 				return false;
 			}

@@ -1,6 +1,7 @@
 package org.trentech.easykits.events;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,7 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.trentech.easykits.Main;
 import org.trentech.easykits.kits.Kit;
-import org.trentech.easykits.kits.KitUser;
+import org.trentech.easykits.kits.KitService;
 import org.trentech.easykits.utils.Notifications;
 
 public class SignListener implements Listener{
@@ -51,16 +52,19 @@ public class SignListener implements Listener{
 		}
 
 		String kitName = line[1];
-		Kit kit = new Kit(kitName);
-		if (!kit.exists()) {
+
+		Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
+		
+		if (!optionalKit.isPresent()) {
 			Notifications notify = new Notifications("Kit-Not-Exist", kitName, null, 0, null, 0);
 			player.sendMessage(notify.getMessage());
 			return;
 		}
-
+		Kit kit = optionalKit.get();
+		
 		if(Main.getPlugin().getConfig().getString("Config.Sign-Action").equalsIgnoreCase("view")) {
 			ItemStack[] inv = kit.getInventory();
-			ItemStack[] arm = kit.getArmor();
+			ItemStack[] arm = kit.getEquipment();
 
 			Inventory showInv = Main.getPlugin().getServer().createInventory(player, 45, "EasyKits Kit: " + kit.getName());
 			showInv.setContents(inv);								
@@ -80,13 +84,7 @@ public class SignListener implements Listener{
 			player.openInventory(showInv);
 			
 		}else if(Main.getPlugin().getConfig().getString("Config.Sign-Action").equalsIgnoreCase("obtain")) {
-
-			KitUser kitUser = new KitUser(player, kit);
-			try {
-				kitUser.applyKit();
-			} catch (Exception e) {
-				Main.getPlugin().getLogger().equals(e.getMessage());
-			}
+			KitService.instance().setKit(player, kit, true);
 		}else{
 			player.sendMessage(ChatColor.DARK_RED + "ERROR: Check your config!");
 		}
@@ -111,14 +109,17 @@ public class SignListener implements Listener{
 		}
 
 		String kitName = line[1];
-		Kit kit = new Kit(kitName);
-		if (!kit.exists()) {
+
+		Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
+		
+		if (!optionalKit.isPresent()) {
 			Notifications notify = new Notifications("Kit-Not-Exist", kitName, null, 0, null, 0);
 			player.sendMessage(notify.getMessage());
 			event.setCancelled(true);
 			return;
 		}
-
+		Kit kit = optionalKit.get();
+		
 		String newLine = ChatColor.DARK_BLUE + kitSign;
 		event.setLine(0, newLine);					
 		event.setLine(3, null);

@@ -1,34 +1,34 @@
 package org.trentech.easykits.kits;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import javax.naming.event.EventContext;
-
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.trentech.easykits.Main;
+import org.trentech.easykits.events.KitEvent;
 import org.trentech.easykits.sql.SQLKits;
 import org.trentech.easykits.sql.SQLPlayers;
-
-import com.google.common.graph.ElementOrder.Type;
+import org.trentech.easykits.utils.Notifications;
 
 public class KitService {
 
+	private static KitService kitService;
+	
 	public KitService() {
-		
+		kitService = this;
 	}
+	
 	public static KitService instance() {
-		return this;
+		return kitService;
 	}
 	
 	public Optional<Kit> getKit(String name) {
@@ -105,232 +105,240 @@ public class KitService {
 	}
 	
 	public boolean setKit(Player player, Kit kit, boolean updateUsage) {
-		Kit backup = new Kit("backup", player, 0, 0, 0);
+		KitEvent.Get event = new KitEvent.Get(player, kit);
 		
-		PlayerInventory inv = player.getInventory();
-		
-		ItemStack[] inventory = kit.getInventory();
+		Bukkit.getServer().getPluginManager().callEvent(event);
 
-		if (!grid.isEmpty()) {
-			int i = 0;
-			for (Inventory slot : inv.getMainGrid().slots()) {
-				if (grid.containsKey(i)) {
-					if(slot.peek().isPresent()) {
-						if(!likeStack(grid.get(i), inv)) {
-							if(!firstEmpty(grid.get(i), inv)) {
-								restoreInventory(player, backup);
+		if(!event.isCancelled()){
+			ItemStack[] inv = kit.getInventory();
+			ItemStack[] arm = kit.getEquipment();
+			
+			Inventory tempInv = Main.getPlugin().getServer().createInventory(player, InventoryType.PLAYER);
+			Inventory tempArm = Main.getPlugin().getServer().createInventory(player, 9);
+			
+			tempInv.setContents(player.getInventory().getContents());
+			tempArm.setContents(player.getInventory().getArmorContents());
+			
+			int index = 0;
+			for(ItemStack item : inv){
+				if(item == null){
+					item = new ItemStack(Material.AIR);
+				}
+				if(tempInv.getItem(index) == null){
+					tempInv.setItem(index, item);
+				}else if(tempInv.firstEmpty() > -1){
+					tempInv.addItem(item);			
+				}else{
+					int amount = item.getAmount();
+					HashMap<Integer, ? extends ItemStack> matchItem = player.getInventory().all(item);				
+					int size = matchItem.size();
+					if(size < item.getMaxStackSize()){
+						size = item.getMaxStackSize() - size;
+						if(amount <= size){
+							tempInv.setItem(index, item);
+						}else{
+							Notifications notify = new Notifications("inventory-space", kit.getName(), player.getName(), 0, null, 0);
+							player.sendMessage(notify.getMessage());
+							return false;					
+						}
+					}else{
+						for(int i = 10; i <= 36; i++){
+							if(i == 36){
+								Notifications notify = new Notifications("inventory-space", kit.getName(), player.getName(), 0, null, 0);
+								player.sendMessage(notify.getMessage());
 								return false;
 							}
+							size = size - item.getMaxStackSize();
+							if(size < item.getMaxStackSize()){
+								if(amount <= size){					
+									tempInv.setItem(index, item);
+								}
+							}
 						}
-					} else {
-						slot.set(grid.get(i));
-					}
-				}
-				i++;
-			}
-		}
-
-		Optional<ItemStack> helmet = kit.getHelmet();
-
-		if (helmet.isPresent()) {
-			if(player.getHelmet().isPresent()) {
-				if(!likeStack(helmet.get(), inv)) {
-					if(!firstEmpty(helmet.get(), inv)) {
-						restoreInventory(player, backup);
+						Notifications notify = new Notifications("inventory-space", kit.getName(), player.getName(), 0, null, 0);
+						player.sendMessage(notify.getMessage());
 						return false;
 					}
 				}
-			} else {
-				player.setHelmet(helmet.get());
+				index++;
 			}
-		}
-
-		Optional<ItemStack> chestPlate = kit.getChestPlate();
-
-		if (chestPlate.isPresent()) {			
-			if(player.getChestplate().isPresent()) {
-				if(!likeStack(chestPlate.get(), inv)) {
-					if(!firstEmpty(chestPlate.get(), inv)) {
-						restoreInventory(player, backup);
-						return false;
+			index = 0;
+			for(ItemStack item : arm){
+				if(index == 0){
+					if(item != null){
+						if(tempArm.getItem(0) == null){
+							tempArm.setItem(0, item);
+						}else if(tempInv.firstEmpty() > -1){
+							tempInv.addItem(item);
+						}else{
+							Notifications notify = new Notifications("inventory-space", kit.getName(), player.getName(), 0, null, 0);
+							player.sendMessage(notify.getMessage());
+							return false;
+						}
 					}
 				}
-			} else {
-				player.setChestplate(chestPlate.get());
-			}
-		}
-		
-		Optional<ItemStack> leggings = kit.getLeggings();
-
-		if (leggings.isPresent()) {
-			if(player.getLeggings().isPresent()) {
-				if(!likeStack(leggings.get(), inv)) {
-					if(!firstEmpty(leggings.get(), inv)) {
-						restoreInventory(player, backup);
-						return false;
+				if(index == 1){
+					if(item != null){
+						if(tempArm.getItem(1) == null){
+							tempArm.setItem(1, item);
+						}else if(tempInv.firstEmpty() > -1){
+							tempInv.addItem(item);
+						}else{
+							Notifications notify = new Notifications("inventory-space", kit.getName(), player.getName(), 0, null, 0);
+							player.sendMessage(notify.getMessage());
+							return false;
+						}
 					}
 				}
-			} else {
-				player.setLeggings(leggings.get());
-			}
-		}
-		
-		Optional<ItemStack> boots = kit.getBoots();
-
-		if (boots.isPresent()) {
-			if(player.getBoots().isPresent()) {
-				if(!likeStack(boots.get(), inv)) {
-					if(!firstEmpty(boots.get(), inv)) {
-						restoreInventory(player, backup);
-						return false;
+				if(index == 2){
+					if(item != null){
+						if(tempArm.getItem(2) == null){
+							tempArm.setItem(2, item);
+						}else if(tempInv.firstEmpty() > -1){
+							tempInv.addItem(item);
+						}else{
+							Notifications notify = new Notifications("inventory-space", kit.getName(), player.getName(), 0, null, 0);
+							player.sendMessage(notify.getMessage());
+							return false;
+						}
 					}
 				}
-			} else {
-				player.setBoots(boots.get());
-			}
-		}
-		
-		Optional<ItemStack> offHand = kit.getOffHand();
-
-		if (offHand.isPresent()) {
-			if(player.getItemInHand(HandTypes.OFF_HAND).isPresent()) {
-				if(!likeStack(offHand.get(), inv)) {
-					if(!firstEmpty(offHand.get(), inv)) {
-						restoreInventory(player, backup);
-						return false;
+				if(index == 3){
+					if(item != null){
+						if(tempArm.getItem(3) == null){
+							tempArm.setItem(3, item);
+						}else if(tempInv.firstEmpty() > -1){
+							tempInv.addItem(item);
+						}else{
+							Notifications notify = new Notifications("inventory-space", kit.getName(), player.getName(), 0, null, 0);
+							player.sendMessage(notify.getMessage());
+							return false;
+						}
 					}
+					break;
 				}
-			} else {
-				player.setItemInHand(HandTypes.OFF_HAND, offHand.get());
+				index++;
 			}
-		}
-
-		if(updateUsage) {
-			if(!updateUsage(kit, player)) {
-				restoreInventory(player, backup);
-				return false;
-			}
-		}	
-		
-		Optional<ItemStack> optionalItemStack = player.getItemInHand(HandTypes.MAIN_HAND);
-		
-		if(optionalItemStack.isPresent()) {
-			ItemStack itemStack = optionalItemStack.get();
 			
-			Optional<KitInfoData> optionalKitInfo = itemStack.get(KitInfoData.class);
+			player.getInventory().setContents(tempInv.getContents());
 			
-			if(optionalKitInfo.isPresent()) {
-				KitInfo kitInfo = optionalKitInfo.get().kitInfo().get();
-				
-				if(kitInfo.getKitName().equalsIgnoreCase(kit.getName())) {
-					player.setItemInHand(HandTypes.MAIN_HAND, ItemStack.empty());	
-				}
+			if(tempArm.getItem(0) != null){
+				player.getInventory().setBoots(tempArm.getItem(0));
 			}
-		}
-		
-		return true;
-	}
-	
-	private boolean firstEmpty(ItemStack itemStack, Inventory inventory) {
-		for (Inventory slot : inventory.slots()) {
-
-			if(!slot.peek().isPresent()) {	
-				if(slot.set(itemStack).getType().equals(Type.SUCCESS)) {
-					return true;
-				}
+			if(tempArm.getItem(1) != null){
+				player.getInventory().setLeggings(tempArm.getItem(1));
 			}
+			if(tempArm.getItem(2) != null){
+				player.getInventory().setChestplate(tempArm.getItem(2));
+			}
+			if(tempArm.getItem(3) != null){
+				player.getInventory().setHelmet(tempArm.getItem(3));
+			}
+			return true;
 		}
-		
 		return false;
 	}
 	
-	private boolean likeStack(ItemStack itemStack, Inventory inventory) {
-		for (Inventory slot : inventory.slots()) {
-			Optional<ItemStack> optionalItem = slot.peek();
-			
-			if(optionalItem.isPresent()) {
-				ItemStack i = optionalItem.get();
-				
-				if(i.getType().equals(itemStack.getType())) {
-					int fit = i.getMaxStackQuantity() - i.getQuantity();
-					
-					if(fit >= itemStack.getQuantity()) {
-						i.setQuantity(i.getQuantity() + itemStack.getQuantity());
-						
-						if(slot.set(i).getType().equals(Type.SUCCESS)) {
-							return true;
-						}
-					} else if(fit != 0) {
-						i.setQuantity(i.getQuantity() + fit);
-
-						if(slot.set(i).getType().equals(Type.SUCCESS)) {
-							itemStack.setQuantity(itemStack.getQuantity() - fit);
-						}
-					}
-				}
-			}
-		}
-		
-		return false;
-	}
-	
-	private void restoreInventory(Player player, Kit backup) {
-		player.getInventory().clear();
-
-		PlayerInventory inv = player.getInventory().query(QueryOperationTypes.INVENTORY_TYPE.of(PlayerInventory.class));
-
-		Map<Integer, ItemStack> hotbar = backup.getHotbar();
-
-		if (!hotbar.isEmpty()) {
-			int i = 0;
-			for (Inventory slot : inv.getHotbar().slots()) {
-				if (hotbar.containsKey(i)) {
-					slot.set(hotbar.get(i));
-				}
-				i++;
-			}
-		}
-
-		Map<Integer, ItemStack> grid = backup.getGrid();
-
-		if (!grid.isEmpty()) {
-			int i = 0;
-			for (Inventory slot : inv.getMainGrid().slots()) {
-				if (grid.containsKey(i)) {
-					slot.set(grid.get(i));
-				}
-				i++;
-			}
-		}
-
-		Optional<ItemStack> helmet = backup.getHelmet();
-
-		if (helmet.isPresent()) {
-			player.setHelmet(helmet.get());
-		}
-
-		Optional<ItemStack> chestPlate = backup.getChestPlate();
-
-		if (chestPlate.isPresent()) {
-			player.setChestplate(chestPlate.get());
-		}
-		
-		Optional<ItemStack> leggings = backup.getLeggings();
-
-		if (leggings.isPresent()) {
-			player.setLeggings(leggings.get());
-		}
-		
-		Optional<ItemStack> boots = backup.getBoots();
-
-		if (boots.isPresent()) {
-			player.setBoots(boots.get());
-		}
-		
-		Optional<ItemStack> offHand = backup.getOffHand();
-
-		if (offHand.isPresent()) {
-			player.setItemInHand(HandTypes.OFF_HAND, offHand.get());
-		}
-	}
+//	private boolean firstEmpty(ItemStack itemStack, Inventory inventory) {
+//		for (Inventory slot : inventory.slots()) {
+//
+//			if(!slot.peek().isPresent()) {	
+//				if(slot.set(itemStack).getType().equals(Type.SUCCESS)) {
+//					return true;
+//				}
+//			}
+//		}
+//		
+//		return false;
+//	}
+//	
+//	private boolean likeStack(ItemStack itemStack, Inventory inventory) {
+//		for (Inventory slot : inventory.slots()) {
+//			Optional<ItemStack> optionalItem = slot.peek();
+//			
+//			if(optionalItem.isPresent()) {
+//				ItemStack i = optionalItem.get();
+//				
+//				if(i.getType().equals(itemStack.getType())) {
+//					int fit = i.getMaxStackQuantity() - i.getQuantity();
+//					
+//					if(fit >= itemStack.getQuantity()) {
+//						i.setQuantity(i.getQuantity() + itemStack.getQuantity());
+//						
+//						if(slot.set(i).getType().equals(Type.SUCCESS)) {
+//							return true;
+//						}
+//					} else if(fit != 0) {
+//						i.setQuantity(i.getQuantity() + fit);
+//
+//						if(slot.set(i).getType().equals(Type.SUCCESS)) {
+//							itemStack.setQuantity(itemStack.getQuantity() - fit);
+//						}
+//					}
+//				}
+//			}
+//		}
+//		
+//		return false;
+//	}
+//	
+//	private void restoreInventory(Player player, Kit backup) {
+//		player.getInventory().clear();
+//
+//		PlayerInventory inv = player.getInventory().query(QueryOperationTypes.INVENTORY_TYPE.of(PlayerInventory.class));
+//
+//		Map<Integer, ItemStack> hotbar = backup.getHotbar();
+//
+//		if (!hotbar.isEmpty()) {
+//			int i = 0;
+//			for (Inventory slot : inv.getHotbar().slots()) {
+//				if (hotbar.containsKey(i)) {
+//					slot.set(hotbar.get(i));
+//				}
+//				i++;
+//			}
+//		}
+//
+//		Map<Integer, ItemStack> grid = backup.getGrid();
+//
+//		if (!grid.isEmpty()) {
+//			int i = 0;
+//			for (Inventory slot : inv.getMainGrid().slots()) {
+//				if (grid.containsKey(i)) {
+//					slot.set(grid.get(i));
+//				}
+//				i++;
+//			}
+//		}
+//
+//		Optional<ItemStack> helmet = backup.getHelmet();
+//
+//		if (helmet.isPresent()) {
+//			player.setHelmet(helmet.get());
+//		}
+//
+//		Optional<ItemStack> chestPlate = backup.getChestPlate();
+//
+//		if (chestPlate.isPresent()) {
+//			player.setChestplate(chestPlate.get());
+//		}
+//		
+//		Optional<ItemStack> leggings = backup.getLeggings();
+//
+//		if (leggings.isPresent()) {
+//			player.setLeggings(leggings.get());
+//		}
+//		
+//		Optional<ItemStack> boots = backup.getBoots();
+//
+//		if (boots.isPresent()) {
+//			player.setBoots(boots.get());
+//		}
+//		
+//		Optional<ItemStack> offHand = backup.getOffHand();
+//
+//		if (offHand.isPresent()) {
+//			player.setItemInHand(HandTypes.OFF_HAND, offHand.get());
+//		}
+//	}
 }

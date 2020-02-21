@@ -2,6 +2,8 @@ package org.trentech.easykits;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,8 +12,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.trentech.easykits.kits.Kit;
+import org.trentech.easykits.kits.KitUsage;
 import org.trentech.easykits.kits.KitUser;
 import org.trentech.easykits.sql.SQLKits;
+import org.trentech.easykits.sql.SQLPlayers;
 import org.trentech.easykits.utils.Notifications;
 
 public class Book {
@@ -35,7 +39,7 @@ public class Book {
 	
 	public static void pageOne(Player player){
 		Inventory kitInv = Main.getPlugin().getServer().createInventory(player, 54, "EasyKits:");
-		List<Kit> list = SQLKits.getKitList();
+		ConcurrentHashMap<String, Kit> list = SQLKits.all();
 		
 		if(list.size() <= 9){
 			kitInv = Main.getPlugin().getServer().createInventory(player, 9, "EasyKits:");
@@ -50,7 +54,8 @@ public class Book {
 		}
 		int index = 0;
 		boolean warning = false;
-		for(Kit kit : list){
+		for(Entry<String, Kit> entry : list.entrySet()){
+			Kit kit = entry.getValue();
 			ItemStack kitItem = new ItemStack(Material.BOOK);
 			ItemMeta itemMeta = kitItem.getItemMeta();
 			itemMeta.setDisplayName("EasyKits: " + kit.getName());
@@ -70,7 +75,9 @@ public class Book {
 				}
 			}
 			
-			KitUser kitUser = new KitUser(player, kit);
+			SQLPlayers.getKitUsage(player, kit.getName());
+			
+			KitUser kitUser = new KitUsage(player, kit);
 			int limit = kit.getLimit();
 			if(limit > 0){
 				if(!player.hasPermission("EasyKits.bypass.limit")){
@@ -83,8 +90,8 @@ public class Book {
 				}		
 			}
 			
-			String cooldown = kit.getCooldown();
-			if(!cooldown.equalsIgnoreCase("0")){
+			long cooldown = kit.getCooldown();
+			if(cooldown != 0){
 				if(!player.hasPermission("EasyKits.bypass.cooldown")){
 					if(kitUser.getCooldownTimeRemaining() != null){
 						lore.add(ChatColor.DARK_RED + "Cooldown: " + cooldown);
