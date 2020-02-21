@@ -4,10 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -51,37 +49,17 @@ public class KitService {
 		}
 	}
 	
-	public boolean updateUsage(Kit kit, Player player) {
-		Optional<KitUsage> optional = SQLPlayers.getKitUsage(player, kit.getName());
-		KitUsage kitUsage;
-		
-		if (optional.isPresent()) {
-			kitUsage = optional.get();
-		} else {
-			kitUsage = new KitUsage(kit.getName());
-		}
-		
+	private void updateUsage(Kit kit, Player player) {
+		KitUsage kitUsage = SQLPlayers.getKitUsage(player, kit.getName());
+
 		if(!player.hasPermission("easykits.override.cooldown")) {
 			if(kit.getCooldown() > 0) {
-				Date date = kitUsage.getDate();
-				
-				long timeSince = TimeUnit.MILLISECONDS.toSeconds(new Date().getTime() - date.getTime());
-				long waitTime = kit.getCooldown();
-				
-				if(waitTime - timeSince > 0) {	
-					return false;
-				}
-				
 				kitUsage.setDate(new Date());
 			}
 		}
 
 		if(!player.hasPermission("easykits.override.limit")) {
 			if(kit.getLimit() > 0) {
-				if(kitUsage.getTimesUsed() >= kit.getLimit()) {
-					return false;
-				}
-				
 				kitUsage.setTimesUsed(kitUsage.getTimesUsed() + 1);
 			}
 		}
@@ -89,23 +67,16 @@ public class KitService {
 		if(!player.hasPermission("easykits.override.price")) {
 			if(kit.getPrice() > 0) {
 				if(Main.getPlugin().supportsEconomy()) {
-					if(Main.getPlugin().getEconomy().getBalance(player) < kit.getPrice()){
-						player.sendMessage(ChatColor.RED + "You do not have enough money. Require " + Main.getPlugin().getConfig().getString("config.currency-symbol") + kit.getPrice());
-						return false;
-					}
-					
 					Main.getPlugin().getEconomy().withdrawPlayer(player, kit.getPrice());
 				}
 			}
 		}
 		
 		SQLPlayers.update(player, kitUsage);
-		
-		return true;
 	}
 	
 	public boolean setKit(Player player, Kit kit, boolean updateUsage) {
-		KitEvent.Get event = new KitEvent.Get(player, kit);
+		KitEvent.Get event = new KitEvent.Get(player, kit, updateUsage);
 		
 		Bukkit.getServer().getPluginManager().callEvent(event);
 
@@ -219,6 +190,8 @@ public class KitService {
 				}
 				index++;
 			}
+
+			updateUsage(kit, player);
 			
 			player.getInventory().setContents(tempInv.getContents());
 			
@@ -238,107 +211,4 @@ public class KitService {
 		}
 		return false;
 	}
-	
-//	private boolean firstEmpty(ItemStack itemStack, Inventory inventory) {
-//		for (Inventory slot : inventory.slots()) {
-//
-//			if(!slot.peek().isPresent()) {	
-//				if(slot.set(itemStack).getType().equals(Type.SUCCESS)) {
-//					return true;
-//				}
-//			}
-//		}
-//		
-//		return false;
-//	}
-//	
-//	private boolean likeStack(ItemStack itemStack, Inventory inventory) {
-//		for (Inventory slot : inventory.slots()) {
-//			Optional<ItemStack> optionalItem = slot.peek();
-//			
-//			if(optionalItem.isPresent()) {
-//				ItemStack i = optionalItem.get();
-//				
-//				if(i.getType().equals(itemStack.getType())) {
-//					int fit = i.getMaxStackQuantity() - i.getQuantity();
-//					
-//					if(fit >= itemStack.getQuantity()) {
-//						i.setQuantity(i.getQuantity() + itemStack.getQuantity());
-//						
-//						if(slot.set(i).getType().equals(Type.SUCCESS)) {
-//							return true;
-//						}
-//					} else if(fit != 0) {
-//						i.setQuantity(i.getQuantity() + fit);
-//
-//						if(slot.set(i).getType().equals(Type.SUCCESS)) {
-//							itemStack.setQuantity(itemStack.getQuantity() - fit);
-//						}
-//					}
-//				}
-//			}
-//		}
-//		
-//		return false;
-//	}
-//	
-//	private void restoreInventory(Player player, Kit backup) {
-//		player.getInventory().clear();
-//
-//		PlayerInventory inv = player.getInventory().query(QueryOperationTypes.INVENTORY_TYPE.of(PlayerInventory.class));
-//
-//		Map<Integer, ItemStack> hotbar = backup.getHotbar();
-//
-//		if (!hotbar.isEmpty()) {
-//			int i = 0;
-//			for (Inventory slot : inv.getHotbar().slots()) {
-//				if (hotbar.containsKey(i)) {
-//					slot.set(hotbar.get(i));
-//				}
-//				i++;
-//			}
-//		}
-//
-//		Map<Integer, ItemStack> grid = backup.getGrid();
-//
-//		if (!grid.isEmpty()) {
-//			int i = 0;
-//			for (Inventory slot : inv.getMainGrid().slots()) {
-//				if (grid.containsKey(i)) {
-//					slot.set(grid.get(i));
-//				}
-//				i++;
-//			}
-//		}
-//
-//		Optional<ItemStack> helmet = backup.getHelmet();
-//
-//		if (helmet.isPresent()) {
-//			player.setHelmet(helmet.get());
-//		}
-//
-//		Optional<ItemStack> chestPlate = backup.getChestPlate();
-//
-//		if (chestPlate.isPresent()) {
-//			player.setChestplate(chestPlate.get());
-//		}
-//		
-//		Optional<ItemStack> leggings = backup.getLeggings();
-//
-//		if (leggings.isPresent()) {
-//			player.setLeggings(leggings.get());
-//		}
-//		
-//		Optional<ItemStack> boots = backup.getBoots();
-//
-//		if (boots.isPresent()) {
-//			player.setBoots(boots.get());
-//		}
-//		
-//		Optional<ItemStack> offHand = backup.getOffHand();
-//
-//		if (offHand.isPresent()) {
-//			player.setItemInHand(HandTypes.OFF_HAND, offHand.get());
-//		}
-//	}
 }

@@ -1,11 +1,17 @@
 package org.trentech.easykits.commands;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Optional;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.trentech.easykits.Main;
 import org.trentech.easykits.kits.Kit;
-import org.trentech.easykits.kits.KitUser;
+import org.trentech.easykits.kits.KitService;
+import org.trentech.easykits.kits.KitUsage;
+import org.trentech.easykits.sql.SQLPlayers;
 import org.trentech.easykits.utils.Notifications;
 
 public class CMDReset {
@@ -29,21 +35,30 @@ public class CMDReset {
 			String property = args[1];
 			String kitName = args[2];
 
-			Kit kit = new Kit(kitName);
-			if(!kit.exists()) {
-				Notifications notify = new Notifications("Kit-Not-Exist", kit.getName(), sender.getName(), 0, null, 0);
+			Optional<Kit> optional = KitService.instance().getKit(args[1]);
+			
+			if(!optional.isPresent()) {
+				Notifications notify = new Notifications("Kit-Not-Exist", args[1], sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
+			Kit kit = optional.get();
 			
-			KitUser kitUser = new KitUser(player, kit);
+			KitUsage kitUsage = SQLPlayers.getKitUsage(player, kit.getName());
+
 			if(property.equalsIgnoreCase("cooldown")) {
-				kitUser.setDateObtained("2000-1-1 12:00:00");
-				Notifications notify = new Notifications("Set-Cooldown", kitName, player.getName(), 0, "NONE", 0);
-				sender.sendMessage(notify.getMessage());
-				player.sendMessage(notify.getMessage());
+				try {
+					kitUsage.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2000-01-01 12:00:00"));
+					SQLPlayers.update(player, kitUsage);
+					Notifications notify = new Notifications("Set-Cooldown", kitName, player.getName(), 0, "NONE", 0);
+					sender.sendMessage(notify.getMessage());
+					player.sendMessage(notify.getMessage());
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 			}else if(property.equalsIgnoreCase("limit")) {
-				kitUser.setCurrentLimit(kit.getLimit());
+				kitUsage.setTimesUsed(0);
+				SQLPlayers.update(player, kitUsage);
 				Notifications notify = new Notifications("Set-Kit-Limit", kitName, player.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				player.sendMessage(notify.getMessage());

@@ -1,8 +1,11 @@
 package org.trentech.easykits.commands;
 
+import java.util.Optional;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.trentech.easykits.kits.Kit;
+import org.trentech.easykits.kits.KitService;
 import org.trentech.easykits.utils.Notifications;
 
 public class CMDCooldown {
@@ -16,30 +19,24 @@ public class CMDCooldown {
 		}
 		
 		if(args.length >= 3){
-	        StringBuilder str = new StringBuilder(args[2]);
-	        for (String arg : args){
-	        	if(!(arg.equals(args[0]) || arg.equals(args[1]) || arg.equals(args[2]))){
-		        	str.append(" ").append(arg);
-	        	}
-	        }
-			Kit kit = new Kit(args[1]);
-			if(!kit.exists()) {
+			Optional<Kit> optional = KitService.instance().getKit(args[1]);
+			
+			if(!optional.isPresent()) {
 				Notifications notify = new Notifications("Kit-Not-Exist", args[1], sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
+			Kit kit = optional.get();
 
-			String[] newArgs = str.toString().split(" ");
-
-			if(!isValid(newArgs)) {
-				Notifications notify = new Notifications("Invalid-Argument", args[1], sender.getName(), 0, str.toString(), 0);
+			if(!isValid(args[2])) {
+				Notifications notify = new Notifications("Invalid-Argument", args[1], sender.getName(), 0, args[2], 0);
 				sender.sendMessage(notify.getMessage());
 				sender.sendMessage(ChatColor.YELLOW + "/kit cooldown <kitname> <cooldown>");
 				return;
 			}
 
-			kit.setCooldown(str.toString());
-			Notifications notify = new Notifications("Set-Cooldown", kit.getName(), sender.getName(), 0, str.toString(), 0);
+			kit.setCooldown(getTimeInSeconds(args[2]));
+			Notifications notify = new Notifications("Set-Cooldown", kit.getName(), sender.getName(), 0, args[2], 0);
 			sender.sendMessage(notify.getMessage());
 		}else{
 			sender.sendMessage(ChatColor.YELLOW + "/kit cooldown <kitname> <cooldown>");

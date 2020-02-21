@@ -1,11 +1,11 @@
 package org.trentech.easykits.commands;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.trentech.easykits.kits.Kit;
-import org.trentech.easykits.sql.SQLPlayers;
+import org.trentech.easykits.kits.KitService;
 import org.trentech.easykits.utils.Notifications;
 
 public class CMDLimit {
@@ -18,13 +18,14 @@ public class CMDLimit {
 		}
 		
 		if(args.length == 3){
-			String kitName = args[1];
-			Kit kit = new Kit(kitName);
-			if(!kit.exists()) {
-				Notifications notify = new Notifications("Kit-Not-Exist", kitName, sender.getName(), 0, null, 0);
+			Optional<Kit> optional = KitService.instance().getKit(args[1]);
+			
+			if(!optional.isPresent()) {
+				Notifications notify = new Notifications("Kit-Not-Exist", args[1], sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
+			Kit kit = optional.get();
 
 			String limit = args[2];
 			try{
@@ -38,13 +39,6 @@ public class CMDLimit {
 			kit.setLimit(Integer.parseInt(limit));
 			Notifications notify = new Notifications("Set-Kit-Limit", kit.getName(), sender.getName(), 0, null, Integer.parseInt(limit));
 			sender.sendMessage(notify.getMessage());
-			
-			List<String> list = SQLPlayers.getPlayerList();
-			for(String playerUUID : list){
-				if(SQLPlayers.getLimit(playerUUID, kit.getName()) == 0){
-					SQLPlayers.setLimit(playerUUID, kit.getName(), Integer.parseInt(limit));
-				}
-			}
 		}else{
 			sender.sendMessage(ChatColor.YELLOW + "/kit limit <kitname> <limit>");
 		}

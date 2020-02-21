@@ -1,8 +1,11 @@
 package org.trentech.easykits.commands;
 
+import java.util.Optional;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.trentech.easykits.kits.Kit;
+import org.trentech.easykits.kits.KitService;
 import org.trentech.easykits.utils.Notifications;
 
 public class CMDPrice {
@@ -15,13 +18,14 @@ public class CMDPrice {
 		}
 		
 		if(args.length == 3){
-			String kitName = args[1];
-			Kit kit = new Kit(kitName);
-			if(!kit.exists()) {
-				Notifications notify = new Notifications("Kit-Not-Exist", kit.getName(), sender.getName(), 0, null, 0);
+			Optional<Kit> optional = KitService.instance().getKit(args[1]);
+			
+			if(!optional.isPresent()) {
+				Notifications notify = new Notifications("Kit-Not-Exist", args[1], sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
-				return;	
+				return;
 			}
+			Kit kit = optional.get();
 
 			String price = args[2];
 			try{

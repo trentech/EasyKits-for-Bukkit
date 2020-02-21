@@ -1,11 +1,12 @@
 package org.trentech.easykits.commands;
 
+import java.util.Optional;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.trentech.easykits.Main;
 import org.trentech.easykits.kits.Kit;
-import org.trentech.easykits.kits.KitUser;
+import org.trentech.easykits.kits.KitService;
 import org.trentech.easykits.utils.Notifications;
 
 public class CMDKit {
@@ -17,23 +18,18 @@ public class CMDKit {
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
+			Player player = (Player) sender;
 			
-			String kitName = args[0];
-			Kit kit = new Kit(kitName);
-			if(!kit.exists()) {
-				Notifications notify = new Notifications("Kit-Not-Exist", kit.getName(), sender.getName(), 0, null, 0);
+			Optional<Kit> optional = KitService.instance().getKit(args[0]);
+			
+			if(!optional.isPresent()) {
+				Notifications notify = new Notifications("Kit-Not-Exist", args[0], sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
+			Kit kit = optional.get();
 
-			Player player = (Player) sender;
-			KitUser kitUser = new KitUser(player, kit);
-			try {
-				kitUser.applyKit();
-			} catch (Exception e) {
-				Main.getPlugin().getLogger().severe(e.getMessage());
-			}
-
+			KitService.instance().setKit(player, kit, true);
 		}else{
 			sender.sendMessage(ChatColor.DARK_GREEN + "" + ChatColor.UNDERLINE + "Command List:\n");
 			sender.sendMessage(ChatColor.YELLOW + "/kit -or- /k");

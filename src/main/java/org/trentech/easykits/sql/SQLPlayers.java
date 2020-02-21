@@ -7,12 +7,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.bukkit.entity.Player;
-import org.trentech.easykits.kits.KitUsage;
 import org.trentech.easykits.Main;
+import org.trentech.easykits.kits.KitUsage;
 
 public class SQLPlayers extends SQLUtils{
 
@@ -105,9 +104,12 @@ public class SQLPlayers extends SQLUtils{
 		synchronized (lock) {
 			try {
 				PreparedStatement statement = prepare("UPDATE `" + playerUUID + "` SET Obtained = ? WHERE Kit = ?");
+				
 				statement.setString(1, obtainedBefore);
 				statement.setString(2, kitName);
 				statement.executeUpdate();
+				
+				statement.close();
 			} catch (SQLException e) {
 				Main.getPlugin().getLogger().severe(e.getMessage());
 			}
@@ -118,47 +120,20 @@ public class SQLPlayers extends SQLUtils{
 		synchronized (lock) {
 			try {
 				PreparedStatement statement = prepare("UPDATE `" + playerUUID + "` SET Limits = ? WHERE Kit = ?");
+				
 				statement.setInt(1, limit);
 				statement.setString(2, kitName);
 				statement.executeUpdate();
+				
+				statement.close();
 			} catch (SQLException e) {
 				Main.getPlugin().getLogger().severe(e.getMessage());
 			}
 		}
 	}
 
-	public static String getDateObtained(String playerUUID, String kitName) {
-		try {
-			PreparedStatement statement = prepare("SELECT * FROM `" + playerUUID + "`");
-			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				if (rs.getString("Kit").equalsIgnoreCase(kitName)) {
-					return rs.getString("Cooldown");
-				}
-			}
-		} catch (SQLException e) {
-			Main.getPlugin().getLogger().severe(e.getMessage());
-		}
-		return "0";
-	}
-
-	public static int getLimit(String playerUUID, String kitName) {	
-		try {
-			PreparedStatement statement = prepare("SELECT * FROM `" + playerUUID + "`");
-			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				if (rs.getString("Kit").equalsIgnoreCase(kitName)) {
-					return rs.getInt("Limits");
-				}
-			}
-		} catch (SQLException e) {
-			Main.getPlugin().getLogger().severe(e.getMessage());
-		}
-		return 0;
-	}
-
-	public static Optional<KitUsage> getKitUsage(Player player, String kitName) {
-		Optional<KitUsage> kitUsage = Optional.empty();
+	public static KitUsage getKitUsage(Player player, String kitName) {
+		KitUsage kitUsage = null;
 		
 		try {
 			PreparedStatement statement = prepare("SELECT * FROM `" + player.getUniqueId().toString() + "`");
@@ -166,11 +141,18 @@ public class SQLPlayers extends SQLUtils{
 			
 			while (result.next()) {
 				if (result.getString("Kit").equalsIgnoreCase(kitName)) {
-					kitUsage = Optional.of(new KitUsage(result.getString("Kit"), result.getInt("Used"), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(result.getString("Date"))));
+					kitUsage = new KitUsage(result.getString("Kit"), result.getInt("Used"), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(result.getString("Date")));
 				}
 			}
+			
+			statement.close();
+			result.close();
 		} catch (SQLException | ParseException e) {
 			Main.getPlugin().getLogger().severe(e.getMessage());
+		}
+		
+		if(kitUsage == null) {
+			return new KitUsage(kitName);
 		}
 		
 		return kitUsage;

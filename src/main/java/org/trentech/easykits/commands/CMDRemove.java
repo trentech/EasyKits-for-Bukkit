@@ -1,10 +1,14 @@
 package org.trentech.easykits.commands;
 
-import java.sql.SQLException;
+import java.util.Optional;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.trentech.easykits.events.KitEvent;
 import org.trentech.easykits.kits.Kit;
+import org.trentech.easykits.kits.KitService;
 import org.trentech.easykits.utils.Notifications;
 
 public class CMDRemove {
@@ -17,21 +21,23 @@ public class CMDRemove {
 		}
 		
 		if(args.length == 2){
-			String kitName = args[1];
-			Kit kit = new Kit(kitName);
-			if(!kit.exists()) {
-				Notifications notify = new Notifications("Kit-Not-Exist", kit.getName(), sender.getName(), 0, null, 0);
+			Optional<Kit> optional = KitService.instance().getKit(args[1]);
+			
+			if(!optional.isPresent()) {
+				Notifications notify = new Notifications("Kit-Not-Exist", args[1], sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
+			Kit kit = optional.get();
 			
-			try {
-				kit.remove();
+			KitEvent.Delete event = new KitEvent.Delete((Player) sender, kit);
+
+			Bukkit.getServer().getPluginManager().callEvent(event);
+
+			if(!event.isCancelled()){
+				KitService.instance().delete(kit.getName());
 				Notifications notify = new Notifications("Kit-Deleted", kit.getName(), sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return;
 			}
 		}else{
 			sender.sendMessage(ChatColor.YELLOW + "/kit remove <kitname>");

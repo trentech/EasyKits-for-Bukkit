@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -139,8 +140,13 @@ public class MainListener implements Listener {
 		}
 		Kit kit = optionalKit.get();
 
-		Book.pageTwo(player, kit);
-	
+		KitEvent.View e = new KitEvent.View(player, kit);
+		
+		Bukkit.getServer().getPluginManager().callEvent(e);
+
+		if(!event.isCancelled()){
+			Book.pageTwo(player, kit);
+		}	
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -172,24 +178,24 @@ public class MainListener implements Listener {
 			return;
 		}
 
-		KitUsage kitUsage;
-		Optional<KitUsage> optionalKitUsage = SQLPlayers.getKitUsage(player, kit.getName());
-		if(optionalKitUsage.isPresent()) {
-			kitUsage = optionalKitUsage.get();
-		} else {
-			kitUsage = new KitUsage(kit.getName());
+		if(!event.doChecks()) {
+			return;
 		}
+		
+		KitUsage kitUsage = SQLPlayers.getKitUsage(player, kit.getName());
 
 		if(!player.hasPermission("easykits.override.cooldown")) {
-			Date date = kitUsage.getDate();
-			
-			long timeSince = TimeUnit.MILLISECONDS.toSeconds(new Date().getTime() - date.getTime());
-			long waitTime = kit.getCooldown();
-			
-			if(waitTime - timeSince > 0) {	
-				player.sendMessage(ChatColor.RED + "You must wait " + Utils.getReadableTime(waitTime - timeSince));
-				event.setCancelled(true);
-				return;
+			if(kit.getCooldown() > 0) {
+				Date date = kitUsage.getDate();
+				
+				long timeSince = TimeUnit.MILLISECONDS.toSeconds(new Date().getTime() - date.getTime());
+				long waitTime = kit.getCooldown();
+				
+				if(waitTime - timeSince > 0) {	
+					player.sendMessage(ChatColor.RED + "You must wait " + Utils.getReadableTime(waitTime - timeSince));
+					event.setCancelled(true);
+					return;
+				}
 			}
 		}
 
@@ -204,14 +210,14 @@ public class MainListener implements Listener {
 		}
 		
 		if(!player.hasPermission("easykits.override.price")) {
-			if(kit.getPrice() > 0){				
-				if(Main.getPlugin().getEconomy().getBalance(player) < kit.getPrice()){
-					player.sendMessage(ChatColor.RED + "You do not have enough money. Requires " + Main.getPlugin().getConfig().getString("config.currency-symbol") + kit.getPrice());
-					event.setCancelled(true);
-					return;
+			if(kit.getPrice() > 0){	
+				if(Main.getPlugin().supportsEconomy()) {
+					if(Main.getPlugin().getEconomy().getBalance(player) < kit.getPrice()){
+						player.sendMessage(ChatColor.RED + "You do not have enough money. Requires " + Main.getPlugin().getConfig().getString("config.currency-symbol") + kit.getPrice());
+						event.setCancelled(true);
+						return;
+					}
 				}
-				
-				Main.getPlugin().getEconomy().withdrawPlayer(player, kit.getPrice());
 			}
 		}
 	}

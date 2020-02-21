@@ -1,7 +1,7 @@
 package org.trentech.easykits;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,11 +12,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.trentech.easykits.kits.Kit;
-import org.trentech.easykits.kits.KitUsage;
-import org.trentech.easykits.kits.KitUser;
 import org.trentech.easykits.sql.SQLKits;
-import org.trentech.easykits.sql.SQLPlayers;
 import org.trentech.easykits.utils.Notifications;
+import org.trentech.easykits.utils.Utils;
 
 public class Book {
 
@@ -64,44 +62,26 @@ public class Book {
 				double price = kit.getPrice();
 				if(price > 0){		
 					if(!player.hasPermission("EasyKits.bypass.price")){
-						double balance = Main.getPlugin().getEconomy().getBalance(player);
-						if(balance < price) {
-							lore.add(ChatColor.DARK_RED + "Price: $" + price);
-						}else{
-							lore.add(ChatColor.GREEN + "Price: $" + price);
-						}
-						itemMeta.setLore(lore);
+						lore.add(ChatColor.GREEN + "Price: $" + price);
 					}	
 				}
 			}
-			
-			SQLPlayers.getKitUsage(player, kit.getName());
-			
-			KitUser kitUser = new KitUsage(player, kit);
+
 			int limit = kit.getLimit();
 			if(limit > 0){
 				if(!player.hasPermission("EasyKits.bypass.limit")){
-					if(((kitUser.getCurrentLimit() == 0) && (kit.getLimit() > 0))) {
-						lore.add(ChatColor.DARK_RED + "Limit: " + limit);
-					}else{
-						lore.add(ChatColor.GREEN + "Limit: " + limit);	
-					}
-					itemMeta.setLore(lore);
+					lore.add(ChatColor.GREEN + "Limit: " + limit);	
 				}		
 			}
 			
 			long cooldown = kit.getCooldown();
 			if(cooldown != 0){
 				if(!player.hasPermission("EasyKits.bypass.cooldown")){
-					if(kitUser.getCooldownTimeRemaining() != null){
-						lore.add(ChatColor.DARK_RED + "Cooldown: " + cooldown);
-					}else{
-						lore.add(ChatColor.GREEN + "Cooldown: " + cooldown);
-					}	
-					itemMeta.setLore(lore);
+					lore.add(ChatColor.GREEN + "Cooldown: " + cooldown);
 				}
 			}
 			
+			itemMeta.setLore(lore);
 			kitItem.setItemMeta(itemMeta);
 			if(index < 54){
 				kitInv.addItem(kitItem);
@@ -119,16 +99,33 @@ public class Book {
 	}
 	
 	public static void pageTwo(Player player, Kit kit){
-		ItemStack[] inv = kit.getInventory();
-		ItemStack[] arm = kit.getEquipment();
-
 		Inventory showInv = Main.getPlugin().getServer().createInventory(player, 45, "EasyKits: " + kit.getName());
-		showInv.setContents(inv);								
+
+		showInv.setContents(kit.getInventory());
+
 		int index = 36;
-		for(ItemStack a : arm){
+		for(ItemStack a : kit.getEquipment()){
 			showInv.setItem(index, a);
 			index++;
-		}	
+		}
+	
+		String currency = Main.getPlugin().getConfig().getString("config.currency-symbol");
+
+		ItemStack getPrice = new ItemStack(Material.BARRIER);
+		ItemMeta priceMeta = getPrice.getItemMeta();
+		priceMeta.setDisplayName(ChatColor.GREEN + "Price: " + currency + ChatColor.WHITE + new DecimalFormat(".##").format(kit.getPrice()));
+		getPrice.setItemMeta(priceMeta);
+		
+		ItemStack getLimit = new ItemStack(Material.BARRIER);
+		ItemMeta limitMeta = getLimit.getItemMeta();
+		limitMeta.setDisplayName(ChatColor.GREEN + "Limit: " + ChatColor.WHITE + kit.getLimit());
+		getLimit.setItemMeta(limitMeta);
+		
+		ItemStack getCooldown = new ItemStack(Material.BARRIER);
+		ItemMeta cooldownMeta = getCooldown.getItemMeta();
+		cooldownMeta.setDisplayName(ChatColor.GREEN + "Cooldown: " + ChatColor.WHITE + Utils.getReadableTime(kit.getCooldown()));
+		getCooldown.setItemMeta(cooldownMeta);
+		
 		ItemStack getKit = new ItemStack(Material.NETHER_STAR);
 		ItemMeta getKitMeta = getKit.getItemMeta();
 		getKitMeta.setDisplayName(ChatColor.GREEN + "Get " + kit.getName().toLowerCase());
@@ -145,8 +142,12 @@ public class Book {
 		backButtonMeta.setLore(backButtonLores);
 		backButton.setItemMeta(backButtonMeta);
 		
+		showInv.setItem(40, getPrice);
+		showInv.setItem(41, getLimit);
+		showInv.setItem(42, getCooldown);
 		showInv.setItem(43, backButton);
 		showInv.setItem(44, getKit);
+		
 		player.openInventory(showInv);
 	}
 }

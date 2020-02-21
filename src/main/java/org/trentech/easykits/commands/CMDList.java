@@ -1,6 +1,7 @@
 package org.trentech.easykits.commands;
 
-import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -8,8 +9,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.trentech.easykits.Main;
 import org.trentech.easykits.kits.Kit;
-import org.trentech.easykits.kits.KitUser;
-import org.trentech.easykits.sql.SQLKits;
+import org.trentech.easykits.kits.KitService;
 import org.trentech.easykits.utils.Notifications;
 
 public class CMDList {
@@ -21,26 +21,16 @@ public class CMDList {
 			return;
 		}
 		
-		List<Kit> list = SQLKits.getKitList();
+		ConcurrentHashMap<String, Kit> list = KitService.instance().getKits();
+		
 		sender.sendMessage(ChatColor.UNDERLINE + "" + ChatColor.DARK_GREEN + "Kits:\n");
-		for(Kit kit : list) {
+		for(Entry<String, Kit> entry : list.entrySet()) {
+			Kit kit = entry.getValue();
+			
 			if(sender.hasPermission("EasyKits.kits." + kit.getName()) && !kit.getName().equalsIgnoreCase(Main.getPlugin().getConfig().getString("Config.First-Join-Kit")) || sender instanceof ConsoleCommandSender) {
 				String kitMsg = ChatColor.YELLOW + "- " + kit.getName();
 				if(sender instanceof Player) {
 					Player player = (Player) sender;
-
-					KitUser kitUser = new KitUser(player, kit);
-					if(!player.hasPermission("EasyKits.bypass.limit")){
-						if(((kitUser.getCurrentLimit() == 0) && (kit.getLimit() > 0))){
-							kitMsg = ChatColor.STRIKETHROUGH + "" + ChatColor.DARK_RED + "- " + kit.getName();
-						}
-					}
-					
-					if(!player.hasPermission("EasyKits.bypass.cooldown")){
-						if((kitUser.getCooldownTimeRemaining() != null)) {
-							kitMsg = ChatColor.STRIKETHROUGH + "" + ChatColor.DARK_RED + "- " + kit.getName();
-						}
-					}
 
 					double price = kit.getPrice();
 					if(price > 0) {

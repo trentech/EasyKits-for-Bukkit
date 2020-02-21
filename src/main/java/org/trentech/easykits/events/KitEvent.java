@@ -65,8 +65,15 @@ public class KitEvent extends Event {
 	
 	public static class Get extends KitEvent {
 		
-		public Get(Player player, Kit kit) {
+		protected boolean checks;
+		
+		public Get(Player player, Kit kit, boolean checks) {
 			super(player, kit);
+			this.checks = checks;
+		}
+		
+		public boolean doChecks() {
+			return checks;
 		}
 	}
 	

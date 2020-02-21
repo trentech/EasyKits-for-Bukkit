@@ -1,16 +1,13 @@
 package org.trentech.easykits.commands;
 
-import java.util.ArrayList;
+import java.util.Optional;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.trentech.easykits.Main;
+import org.trentech.easykits.Book;
 import org.trentech.easykits.kits.Kit;
+import org.trentech.easykits.kits.KitService;
 import org.trentech.easykits.utils.Notifications;
 
 public class CMDView {
@@ -29,34 +26,16 @@ public class CMDView {
 		}
 
 		if(args.length == 2){
-			String kitName = args[1];
-			Kit kit = new Kit(kitName);
-			if(!kit.exists()) {
-				Notifications notify = new Notifications("Kit-Not-Exist", kit.getName(), sender.getName(), 0, null, 0);
+			Optional<Kit> optional = KitService.instance().getKit(args[1]);
+			
+			if(!optional.isPresent()) {
+				Notifications notify = new Notifications("Kit-Not-Exist", args[1], sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
+			Kit kit = optional.get();
 
-			ItemStack[] inv = kit.getInventory();
-			ItemStack[] arm = kit.getArmor();
-
-			Inventory showInv = Main.getPlugin().getServer().createInventory(player, 45, "EasyKits Kit: " + kit.getName());
-			showInv.setContents(inv);								
-			int index = 36;
-			for(ItemStack a : arm){
-				showInv.setItem(index, a);
-				index++;
-			}	
-			ItemStack getKit = new ItemStack(Material.NETHER_STAR);
-			ItemMeta getKitMeta = getKit.getItemMeta();
-			getKitMeta.setDisplayName(ChatColor.GREEN + "Get " + kitName.toLowerCase());
-			ArrayList<String> getKitLores = new ArrayList<String>();
-			getKitLores.add(ChatColor.DARK_PURPLE+ "Click to equip kit!");
-			getKitMeta.setLore(getKitLores);
-			getKit.setItemMeta(getKitMeta);								
-			showInv.setItem(44, getKit);
-			player.openInventory(showInv);
-
+			Book.pageTwo(player, kit);
 		}else{
 			sender.sendMessage(ChatColor.YELLOW + "/kit view <kitname>");
 		}
