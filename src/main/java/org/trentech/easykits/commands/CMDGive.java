@@ -15,8 +15,8 @@ import org.trentech.easykits.utils.Notifications;
 public class CMDGive {
 
 	public static void execute(CommandSender sender, String[] args) {
-		if(!sender.hasPermission("EasyKits.cmd.give")){
-			Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+		if(!sender.hasPermission("easykits.cmd.give")){
+			Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 			sender.sendMessage(notify.getMessage());
 			return;
 		}
@@ -25,7 +25,7 @@ public class CMDGive {
 			Player reciever = Main.getPlugin().getServer().getPlayerExact(args[2]);
 
 			if(reciever == null || !reciever.isOnline()) {
-				Notifications notify = new Notifications("No-Player", null, args[2], 0, null, 0);
+				Notifications notify = new Notifications("no-player", null, args[2], 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
@@ -33,7 +33,7 @@ public class CMDGive {
 			Optional<Kit> optional = KitService.instance().getKit(args[1]);
 			
 			if(!optional.isPresent()) {
-				Notifications notify = new Notifications("Kit-Not-Exist", args[1], sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("kit-not-exist", args[1], sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
@@ -50,7 +50,7 @@ public class CMDGive {
 				}
 			}
 
-			Notifications notify = new Notifications("Kit-Received", kit.getName(), sender.getName(), kit.getPrice(), null, 0);
+			Notifications notify = new Notifications("kit-received", kit.getName(), sender.getName(), kit.getPrice(), null, 0);
 			reciever.sendMessage(notify.getMessage());
 			notify = new Notifications("Kit-Sent", kit.getName(), reciever.getName(), 0, null, 0);
 			sender.sendMessage(notify.getMessage());

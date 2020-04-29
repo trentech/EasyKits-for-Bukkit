@@ -7,10 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.logging.Logger;
 
 import org.bukkit.entity.Player;
-import org.trentech.easykits.Main;
 import org.trentech.easykits.kits.KitUsage;
 
 public class SQLPlayers extends SQLUtils{
@@ -32,15 +30,13 @@ public class SQLPlayers extends SQLUtils{
 			statement.close();
 			result.close();
 		} catch (SQLException e) { 
-			Main.getPlugin().getLogger().severe(e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return bool;
 	}
 
 	public static void createTable(Player player) {
-		Logger.getGlobal().info("Creating player tables");
-		
 		synchronized (lock) {
 			try {
 				PreparedStatement statement = prepare("CREATE TABLE `" + player.getUniqueId().toString() + "`( id INTEGER PRIMARY KEY, Kit TEXT, Date TEXT, Used INTEGER)");
@@ -48,20 +44,20 @@ public class SQLPlayers extends SQLUtils{
 				
 				statement.close();	
 			} catch (SQLException e) {
-				Main.getPlugin().getLogger().severe(e.getMessage());
+				e.printStackTrace();
 			}
 		}			
 	}
 
-	public static void deleteTable(String playerUUID) {
+	public static void deleteTable(Player player) {
 		synchronized (lock) {
 			try {;
-				PreparedStatement statement = prepare("DROP TABLE `" + playerUUID + "`");
+				PreparedStatement statement = prepare("DROP TABLE `" + player.getUniqueId().toString() + "`");
 				statement.executeUpdate();
 				
 				statement.close();
 			} catch (SQLException e) {
-				Main.getPlugin().getLogger().severe(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}
@@ -78,7 +74,7 @@ public class SQLPlayers extends SQLUtils{
 				
 				statement.close();
 			} catch (SQLException e) {
-				Main.getPlugin().getLogger().severe(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}
@@ -86,48 +82,16 @@ public class SQLPlayers extends SQLUtils{
 	public static void update(Player player, KitUsage kitUsage) {
 		synchronized (lock) {
 			try {
-				PreparedStatement statement = prepare("UPDATE `" + player.getUniqueId().toString() + "` SET Date = ?, Used = ?, WHERE Kit = ?");
+				PreparedStatement statement = prepare("UPDATE `" + player.getUniqueId().toString() + "` SET Date = ?, Used = ? WHERE Kit = ?");
 				
 				statement.setString(1, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(kitUsage.getDate()));
 				statement.setInt(2, kitUsage.getTimesUsed());
-				statement.setString(2, kitUsage.getKitName());				
+				statement.setString(3, kitUsage.getKitName());				
 				statement.executeUpdate();
 				
 				statement.close();
 			} catch (SQLException e) {
-				Main.getPlugin().getLogger().severe(e.getMessage());
-			}
-		}
-	}
-
-	public static void setObtained(String playerUUID, String kitName, String obtainedBefore) {
-		synchronized (lock) {
-			try {
-				PreparedStatement statement = prepare("UPDATE `" + playerUUID + "` SET Obtained = ? WHERE Kit = ?");
-				
-				statement.setString(1, obtainedBefore);
-				statement.setString(2, kitName);
-				statement.executeUpdate();
-				
-				statement.close();
-			} catch (SQLException e) {
-				Main.getPlugin().getLogger().severe(e.getMessage());
-			}
-		}
-	}
-
-	public static void setLimit(String playerUUID, String kitName, int limit) {
-		synchronized (lock) {
-			try {
-				PreparedStatement statement = prepare("UPDATE `" + playerUUID + "` SET Limits = ? WHERE Kit = ?");
-				
-				statement.setInt(1, limit);
-				statement.setString(2, kitName);
-				statement.executeUpdate();
-				
-				statement.close();
-			} catch (SQLException e) {
-				Main.getPlugin().getLogger().severe(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}
@@ -138,7 +102,7 @@ public class SQLPlayers extends SQLUtils{
 		try {
 			PreparedStatement statement = prepare("SELECT * FROM `" + player.getUniqueId().toString() + "`");
 			ResultSet result = statement.executeQuery();
-			
+
 			while (result.next()) {
 				if (result.getString("Kit").equalsIgnoreCase(kitName)) {
 					kitUsage = new KitUsage(result.getString("Kit"), result.getInt("Used"), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(result.getString("Date")));
@@ -148,7 +112,7 @@ public class SQLPlayers extends SQLUtils{
 			statement.close();
 			result.close();
 		} catch (SQLException | ParseException e) {
-			Main.getPlugin().getLogger().severe(e.getMessage());
+			e.printStackTrace();
 		}
 		
 		if(kitUsage == null) {
@@ -158,6 +122,38 @@ public class SQLPlayers extends SQLUtils{
 		return kitUsage;
 	}
 
+//	public static void setObtained(Player player, String kitName, String obtainedBefore) {
+//		synchronized (lock) {
+//			try {
+//				PreparedStatement statement = prepare("UPDATE `" + player.getUniqueId().toString() + "` SET Obtained = ? WHERE Kit = ?");
+//				
+//				statement.setString(1, obtainedBefore);
+//				statement.setString(2, kitName);
+//				statement.executeUpdate();
+//				
+//				statement.close();
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//	}
+//
+//	public static void setLimit(Player player, String kitName, int limit) {
+//		synchronized (lock) {
+//			try {
+//				PreparedStatement statement = prepare("UPDATE `" + player.getUniqueId().toString() + "` SET Limits = ? WHERE Kit = ?");
+//				
+//				statement.setInt(1, limit);
+//				statement.setString(2, kitName);
+//				statement.executeUpdate();
+//				
+//				statement.close();
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//	}
+//
 //	public static List<String> getPlayerList() {
 //		List<String> playerList = new ArrayList<String>();
 //		

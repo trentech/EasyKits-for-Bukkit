@@ -33,6 +33,7 @@ public class MainListener implements Listener {
 		Player player = event.getPlayer();
 
 		if(!SQLPlayers.tableExist(player)) {
+			Main.getPlugin().getLogger().info("Creating player table with id " + player.getUniqueId().toString());
 			SQLPlayers.createTable(player);
 		}
 		
@@ -40,7 +41,7 @@ public class MainListener implements Listener {
 			return;
 		}
 
-		String kitName = Main.getPlugin().getConfig().getString("Config.New-Player-Kit");
+		String kitName = Main.getPlugin().getConfig().getString("config.new-player-kit");
 		
 		if(kitName.equalsIgnoreCase("NONE")) {
 			return;
@@ -71,7 +72,7 @@ public class MainListener implements Listener {
 
 			Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
 			if(!optionalKit.isPresent()){
-				Notifications notify = new Notifications("Kit-Not-Exist", kitName, player.getName(), 0, null, 0);
+				Notifications notify = new Notifications("kit-not-exist", kitName, player.getName(), 0, null, 0);
 				player.sendMessage(notify.getMessage());
 				return;
 			}
@@ -134,7 +135,7 @@ public class MainListener implements Listener {
 
 		Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
 		if(!optionalKit.isPresent()){
-			Notifications notify = new Notifications("Kit-Not-Exist", kitName, player.getName(), 0, null, 0);
+			Notifications notify = new Notifications("kit-not-exist", kitName, player.getName(), 0, null, 0);
 			player.sendMessage(notify.getMessage());
 			return;
 		}
@@ -263,7 +264,7 @@ public class MainListener implements Listener {
 			return;
 		}
 		String msg = ChatColor.GREEN + "[EasyKits]: " + ChatColor.GOLD + event.getViewers().get(0).getName() + " is a book cheater!";
-		Main.getPlugin().getServer().broadcast(msg, "EasyKits.cmd.book");
+		Main.getPlugin().getServer().broadcast(msg, "easyKits.cmd.book");
 		event.getInventory().setResult(new ItemStack(Material.AIR));
 	}
 

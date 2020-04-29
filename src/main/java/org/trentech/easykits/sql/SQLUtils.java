@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.trentech.easykits.Main;
-
 public abstract class SQLUtils {
 
     protected static Connection connection = null;
@@ -42,7 +40,7 @@ public abstract class SQLUtils {
                 connection.close();
             }
         } catch (SQLException e) {
-        	Main.getPlugin().getLogger().severe(e.getMessage());
+        	e.printStackTrace();
         }
         
         connection = null;
@@ -68,7 +66,7 @@ public abstract class SQLUtils {
         if (useStatementCache && statementCache.containsKey(sql)) {
             return statementCache.get(sql);
         }
-        
+
         PreparedStatement preparedStatement = returnGeneratedKeys ? connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS) : connection.prepareStatement(sql);
         statementCache.put(sql, preparedStatement);
         

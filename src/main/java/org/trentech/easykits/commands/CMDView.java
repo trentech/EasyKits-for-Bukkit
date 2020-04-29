@@ -14,13 +14,13 @@ public class CMDView {
 
 	public static void execute(CommandSender sender, String[] args) {
 		if(!(sender instanceof Player)) {
-			Notifications notify = new Notifications("Not-Player", null, sender.getName(), 0, null, 0);
+			Notifications notify = new Notifications("not-player", null, sender.getName(), 0, null, 0);
 			sender.sendMessage(notify.getMessage());
 			return;
 		}
 		Player player = (Player) sender;
-		if(!sender.hasPermission("EasyKits.cmd.view")){
-			Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+		if(!sender.hasPermission("easyKits.cmd.view")){
+			Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 			sender.sendMessage(notify.getMessage());
 			return;
 		}
@@ -29,7 +29,7 @@ public class CMDView {
 			Optional<Kit> optional = KitService.instance().getKit(args[1]);
 			
 			if(!optional.isPresent()) {
-				Notifications notify = new Notifications("Kit-Not-Exist", args[1], sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("kit-not-exist", args[1], sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}

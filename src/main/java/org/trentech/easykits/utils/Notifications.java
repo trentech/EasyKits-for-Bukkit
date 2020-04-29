@@ -26,31 +26,31 @@ public class Notifications {
 	}
 	
 	public void getMessages() {
-		Main.getMessages().put("Permission-Denied", Main.getPlugin().getConfig().getString("Messages.Permission-Denied"));
-		Main.getMessages().put("Kit-Created", Main.getPlugin().getConfig().getString("Messages.Kit-Created"));
-		Main.getMessages().put("Kit-Deleted", Main.getPlugin().getConfig().getString("Messages.Kit-Deleted"));
-		Main.getMessages().put("Kit-Obtained", Main.getPlugin().getConfig().getString("Messages.Kit-Obtained"));
-		Main.getMessages().put("Kit-Sent", Main.getPlugin().getConfig().getString("Messages.Kit-Sent"));
-		Main.getMessages().put("Kit-Received", Main.getPlugin().getConfig().getString("Messages.Kit-Received"));
-		Main.getMessages().put("Kit-Exist", Main.getPlugin().getConfig().getString("Messages.Kit-Exist"));
-		Main.getMessages().put("Kit-Not-Exist", Main.getPlugin().getConfig().getString("Messages.Kit-Not-Exist"));
-		Main.getMessages().put("Get-Kit-Limit", Main.getPlugin().getConfig().getString("Messages.Get-Kit-Limit"));
-		Main.getMessages().put("Set-Kit-Limit", Main.getPlugin().getConfig().getString("Messages.Set-Kit-Limit"));
-		Main.getMessages().put("Reset-Kit-Limit", Main.getPlugin().getConfig().getString("Messages.Reset-Kit-Limit"));
-		Main.getMessages().put("Get-Cooldown", Main.getPlugin().getConfig().getString("Messages.Get-Cooldown"));
-		Main.getMessages().put("Set-Cooldown", Main.getPlugin().getConfig().getString("Messages.Set-Cooldown"));
-		Main.getMessages().put("Reset-Cooldown", Main.getPlugin().getConfig().getString("Messages.Reset-Cooldown"));
-		Main.getMessages().put("Get-Price", Main.getPlugin().getConfig().getString("Messages.Get-Price"));
-		Main.getMessages().put("Set-Price", Main.getPlugin().getConfig().getString("Messages.Set-Price"));
-		Main.getMessages().put("Insufficient-Funds", Main.getPlugin().getConfig().getString("Messages.Insufficient-Funds"));
-		Main.getMessages().put("Inventory-Space", Main.getPlugin().getConfig().getString("Messages.Inventory-Space"));
-		Main.getMessages().put("New-Player-Kit", Main.getPlugin().getConfig().getString("Messages.New-Player-Kit"));
-		Main.getMessages().put("Kit-Book-Full", Main.getPlugin().getConfig().getString("Messages.Kit-Book-Full"));
-		Main.getMessages().put("Not-Player", Main.getPlugin().getConfig().getString("Messages.Not-Player"));
-		Main.getMessages().put("No-Player", Main.getPlugin().getConfig().getString("Messages.No-Player"));
-		Main.getMessages().put("Invalid-Number", Main.getPlugin().getConfig().getString("Messages.Invalid-Number"));
-		Main.getMessages().put("Invalid-Argument", Main.getPlugin().getConfig().getString("Messages.Invalid-Argument"));
-		Main.getMessages().put("DB-Fail", Main.getPlugin().getConfig().getString("Messages.DB-Fail"));
+		Main.getMessages().put("permission-denied", Main.getPlugin().getConfig().getString("messages.permission-denied"));
+		Main.getMessages().put("kit-created", Main.getPlugin().getConfig().getString("messages.kit-created"));
+		Main.getMessages().put("kit-deleted", Main.getPlugin().getConfig().getString("messages.kit-deleted"));
+		Main.getMessages().put("kit-obtained", Main.getPlugin().getConfig().getString("messages.kit-obtained"));
+		Main.getMessages().put("kit-sent", Main.getPlugin().getConfig().getString("messages.kit-sent"));
+		Main.getMessages().put("kit-received", Main.getPlugin().getConfig().getString("messages.kit-received"));
+		Main.getMessages().put("kit-exist", Main.getPlugin().getConfig().getString("messages.kit-exist"));
+		Main.getMessages().put("kit-not-exist", Main.getPlugin().getConfig().getString("messages.kit-not-exist"));
+		Main.getMessages().put("get-kit-limit", Main.getPlugin().getConfig().getString("messages.get-kit-limit"));
+		Main.getMessages().put("set-kit-limit", Main.getPlugin().getConfig().getString("messages.set-kit-limit"));
+		Main.getMessages().put("reset-kit-limit", Main.getPlugin().getConfig().getString("messages.reset-kit-limit"));
+		Main.getMessages().put("get-cooldown", Main.getPlugin().getConfig().getString("messages.get-cooldown"));
+		Main.getMessages().put("set-cooldown", Main.getPlugin().getConfig().getString("messages.set-cooldown"));
+		Main.getMessages().put("reset-cooldown", Main.getPlugin().getConfig().getString("messages.reset-cooldown"));
+		Main.getMessages().put("get-price", Main.getPlugin().getConfig().getString("messages.get-price"));
+		Main.getMessages().put("set-price", Main.getPlugin().getConfig().getString("messages.set-price"));
+		Main.getMessages().put("insufficient-funds", Main.getPlugin().getConfig().getString("messages.insufficient-funds"));
+		Main.getMessages().put("inventory-space", Main.getPlugin().getConfig().getString("messages.inventory-space"));
+		Main.getMessages().put("new-player-kit", Main.getPlugin().getConfig().getString("messages.new-player-kit"));
+		Main.getMessages().put("kit-book-full", Main.getPlugin().getConfig().getString("messages.kit-book-full"));
+		Main.getMessages().put("not-player", Main.getPlugin().getConfig().getString("messages.not-player"));
+		Main.getMessages().put("no-player", Main.getPlugin().getConfig().getString("messages.no-player"));
+		Main.getMessages().put("invalid-number", Main.getPlugin().getConfig().getString("messages.invalid-number"));
+		Main.getMessages().put("invalid-argument", Main.getPlugin().getConfig().getString("messages.invalid-argument"));
+		Main.getMessages().put("db-fail", Main.getPlugin().getConfig().getString("messages.db-fail"));
 	}
 	
 	public String getMessage() {

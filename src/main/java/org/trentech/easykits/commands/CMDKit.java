@@ -14,7 +14,7 @@ public class CMDKit {
 	public static void execute(CommandSender sender, String[] args) {
 		if(args.length == 1) {
 			if(!(sender instanceof Player)) {
-				Notifications notify = new Notifications("Not-Player", null, sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("not-player", null, sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
@@ -23,7 +23,7 @@ public class CMDKit {
 			Optional<Kit> optional = KitService.instance().getKit(args[0]);
 			
 			if(!optional.isPresent()) {
-				Notifications notify = new Notifications("Kit-Not-Exist", args[0], sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("kit-not-exist", args[0], sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
@@ -34,40 +34,40 @@ public class CMDKit {
 			sender.sendMessage(ChatColor.DARK_GREEN + "" + ChatColor.UNDERLINE + "Command List:\n");
 			sender.sendMessage(ChatColor.YELLOW + "/kit -or- /k");
 			sender.sendMessage(ChatColor.YELLOW + "/kit [kitname]");	
-			if(sender.hasPermission("EasyKits.cmd.help")) {
+			if(sender.hasPermission("easykits.cmd.help")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit help [command]");
 			}
-			if(sender.hasPermission("EasyKits.cmd.reload")) {
+			if(sender.hasPermission("easykits.cmd.reload")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit reload");
 			}
-			if(sender.hasPermission("EasyKits.cmd.create")) {
+			if(sender.hasPermission("easykits.cmd.create")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit create <kitname>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.remove")) {
+			if(sender.hasPermission("easyKits.cmd.remove")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit remove <kitname>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.limit")) {
+			if(sender.hasPermission("easyKits.cmd.limit")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit limit <kitname> <cooldown>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.cooldown")) {
+			if(sender.hasPermission("easykits.cmd.cooldown")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit cooldown <kitname> <cooldown>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.price")) {
+			if(sender.hasPermission("easykits.cmd.price")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit price <kitname> <price>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.reset")) {
+			if(sender.hasPermission("easyKits.cmd.reset")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit reset [cooldown | limit] <kitname> <player>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.give")) {
+			if(sender.hasPermission("easyKits.cmd.give")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit give <kitname> <player>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.book")) {
+			if(sender.hasPermission("easykits.cmd.book")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit book");
 			}
-			if(sender.hasPermission("EasyKits.cmd.view")) {
+			if(sender.hasPermission("easykits.cmd.view")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit view <kitname>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.list")) {
+			if(sender.hasPermission("easykits.cmd.list")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit list");
 			}
 		}	

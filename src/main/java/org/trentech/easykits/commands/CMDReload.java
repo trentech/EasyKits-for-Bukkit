@@ -9,8 +9,8 @@ import org.trentech.easykits.utils.Notifications;
 public class CMDReload {
 	
 	public static void execute(CommandSender sender) {
-		if(!sender.hasPermission("EasyKits.cmd.reload")){
-			Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+		if(!sender.hasPermission("easyKits.cmd.reload")){
+			Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 			sender.sendMessage(notify.getMessage());
 			return;
 		}

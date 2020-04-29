@@ -44,8 +44,8 @@ public class SignListener implements Listener{
         
 		Player player = event.getPlayer();
 		
-		if(!player.hasPermission("EasyKits.sign.use")) {
-			Notifications notify = new Notifications("Permission-Denied", null, null, 0, null, 0);
+		if(!player.hasPermission("easyKits.sign.use")) {
+			Notifications notify = new Notifications("permission-denied", null, null, 0, null, 0);
 			player.sendMessage(notify.getMessage());
 			event.setCancelled(true);
 			return;
@@ -56,13 +56,13 @@ public class SignListener implements Listener{
 		Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
 		
 		if (!optionalKit.isPresent()) {
-			Notifications notify = new Notifications("Kit-Not-Exist", kitName, null, 0, null, 0);
+			Notifications notify = new Notifications("kit-not-exist", kitName, null, 0, null, 0);
 			player.sendMessage(notify.getMessage());
 			return;
 		}
 		Kit kit = optionalKit.get();
 		
-		if(Main.getPlugin().getConfig().getString("Config.Sign-Action").equalsIgnoreCase("view")) {
+		if(Main.getPlugin().getConfig().getString("config.sign-action").equalsIgnoreCase("view")) {
 			ItemStack[] inv = kit.getInventory();
 			ItemStack[] arm = kit.getEquipment();
 
@@ -83,7 +83,7 @@ public class SignListener implements Listener{
 			showInv.setItem(44, getKit);
 			player.openInventory(showInv);
 			
-		}else if(Main.getPlugin().getConfig().getString("Config.Sign-Action").equalsIgnoreCase("obtain")) {
+		}else if(Main.getPlugin().getConfig().getString("config.sign-action").equalsIgnoreCase("obtain")) {
 			KitService.instance().setKit(player, kit, true);
 		}else{
 			player.sendMessage(ChatColor.DARK_RED + "ERROR: Check your config!");
@@ -101,8 +101,8 @@ public class SignListener implements Listener{
 		}
 
 		Player player = event.getPlayer();
-		if(!player.hasPermission("EasyKits.sign.create")) {
-			Notifications notify = new Notifications("Permission-Denied", null, null, 0, null, 0);
+		if(!player.hasPermission("easykits.sign.create")) {
+			Notifications notify = new Notifications("permission-denied", null, null, 0, null, 0);
 			player.sendMessage(notify.getMessage());
 			event.setCancelled(true);
 			return;
@@ -113,7 +113,7 @@ public class SignListener implements Listener{
 		Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
 		
 		if (!optionalKit.isPresent()) {
-			Notifications notify = new Notifications("Kit-Not-Exist", kitName, null, 0, null, 0);
+			Notifications notify = new Notifications("kit-not-exist", kitName, null, 0, null, 0);
 			player.sendMessage(notify.getMessage());
 			event.setCancelled(true);
 			return;
@@ -146,8 +146,8 @@ public class SignListener implements Listener{
         
 		Player player = event.getPlayer();
 		
-		if(!player.hasPermission("EasyKits.sign.remove")) {
-			Notifications notify = new Notifications("Permission-Denied", null, null, 0, null, 0);
+		if(!player.hasPermission("easykits.sign.remove")) {
+			Notifications notify = new Notifications("permission-denied", null, null, 0, null, 0);
 			player.sendMessage(notify.getMessage());
 			event.setCancelled(true);
 			return;

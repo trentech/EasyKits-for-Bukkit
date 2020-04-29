@@ -17,8 +17,8 @@ import org.trentech.easykits.utils.Notifications;
 public class CMDReset {
 
 	public static void execute(CommandSender sender, String[] args) {
-		if(!sender.hasPermission("EasyKits.cmd.reset")){
-			Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+		if(!sender.hasPermission("easyKits.cmd.reset")){
+			Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 			sender.sendMessage(notify.getMessage());
 			return;
 		}
@@ -27,7 +27,7 @@ public class CMDReset {
 			Player player = Main.getPlugin().getServer().getPlayerExact(args[3]);
 
 			if(player == null || !player.isOnline()){
-				Notifications notify = new Notifications("No-Player", null, args[2], 0, null, 0);
+				Notifications notify = new Notifications("no-player", null, args[2], 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
@@ -38,7 +38,7 @@ public class CMDReset {
 			Optional<Kit> optional = KitService.instance().getKit(args[1]);
 			
 			if(!optional.isPresent()) {
-				Notifications notify = new Notifications("Kit-Not-Exist", args[1], sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("kit-not-exist", args[1], sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
@@ -50,7 +50,7 @@ public class CMDReset {
 				try {
 					kitUsage.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2000-01-01 12:00:00"));
 					SQLPlayers.update(player, kitUsage);
-					Notifications notify = new Notifications("Set-Cooldown", kitName, player.getName(), 0, "NONE", 0);
+					Notifications notify = new Notifications("set-cooldown", kitName, player.getName(), 0, "NONE", 0);
 					sender.sendMessage(notify.getMessage());
 					player.sendMessage(notify.getMessage());
 				} catch (ParseException e) {
@@ -59,7 +59,7 @@ public class CMDReset {
 			}else if(property.equalsIgnoreCase("limit")) {
 				kitUsage.setTimesUsed(0);
 				SQLPlayers.update(player, kitUsage);
-				Notifications notify = new Notifications("Set-Kit-Limit", kitName, player.getName(), 0, null, 0);
+				Notifications notify = new Notifications("set-kit-limit", kitName, player.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				player.sendMessage(notify.getMessage());
 			}else{

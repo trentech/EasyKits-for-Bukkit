@@ -10,13 +10,13 @@ public class CMDBook {
 
 	public static void execute(CommandSender sender) {
 		if(!(sender instanceof Player)) {
-			Notifications notify = new Notifications("Not-Player", null, sender.getName(), 0, null, 0);
+			Notifications notify = new Notifications("not-player", null, sender.getName(), 0, null, 0);
 			sender.sendMessage(notify.getMessage());
 			return;
 		}
 		
-		if(!sender.hasPermission("EasyKits.cmd.book")){
-			Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+		if(!sender.hasPermission("easykits.cmd.book")){
+			Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 			sender.sendMessage(notify.getMessage());
 			return;
 		}

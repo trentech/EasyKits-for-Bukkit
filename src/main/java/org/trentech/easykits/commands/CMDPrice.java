@@ -11,8 +11,8 @@ import org.trentech.easykits.utils.Notifications;
 public class CMDPrice {
 
 	public static void execute(CommandSender sender, String[] args) {
-		if(!sender.hasPermission("EasyKits.cmd.price")){
-			Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+		if(!sender.hasPermission("easykits.cmd.price")){
+			Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 			sender.sendMessage(notify.getMessage());
 			return;
 		}
@@ -21,7 +21,7 @@ public class CMDPrice {
 			Optional<Kit> optional = KitService.instance().getKit(args[1]);
 			
 			if(!optional.isPresent()) {
-				Notifications notify = new Notifications("Kit-Not-Exist", args[1], sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("kit-not-exist", args[1], sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
@@ -31,13 +31,13 @@ public class CMDPrice {
 			try{
 				Double.parseDouble(price);
 			}catch(NumberFormatException e) {
-				Notifications notify = new Notifications("Invalid-Number", null, sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("invalid-number", null, sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
 			
 			kit.setPrice(Double.parseDouble(price));
-			Notifications notify = new Notifications("Set-Price", kit.getName(), sender.getName(), Double.parseDouble(price), null, 0);
+			Notifications notify = new Notifications("set-price", kit.getName(), sender.getName(), Double.parseDouble(price), null, 0);
 			sender.sendMessage(notify.getMessage());
 		}else{
 			sender.sendMessage(ChatColor.YELLOW + "/kit price <kitname> <price>");

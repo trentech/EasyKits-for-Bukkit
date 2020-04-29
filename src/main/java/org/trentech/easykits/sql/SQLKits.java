@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
-import org.trentech.easykits.Main;
 import org.trentech.easykits.kits.Kit;
 
 public abstract class SQLKits extends SQLUtils {
@@ -36,7 +35,7 @@ public abstract class SQLKits extends SQLUtils {
 			statement.close();
 			result.close();
 		} catch (SQLException e) { 
-			Main.getPlugin().getLogger().severe(e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return bool;
@@ -50,7 +49,7 @@ public abstract class SQLKits extends SQLUtils {
 				
 				statement.close();
 			} catch (SQLException e) {
-				Main.getPlugin().getLogger().severe(e.getMessage());
+				e.printStackTrace();
 			}
 		}			
 	}
@@ -58,7 +57,7 @@ public abstract class SQLKits extends SQLUtils {
 	public static void create(Kit kit) {
 		synchronized (lock) {
 			try {
-				PreparedStatement statement = prepare("INSERT into kits (Kit, Inventory, Armor, Price, Cooldown, Limits) VALUES (?, ?, ?, ?, ?, ?, ?)");
+				PreparedStatement statement = prepare("INSERT into kits (Kit, Inventory, Armor, Price, Cooldown, Limits) VALUES (?, ?, ?, ?, ?, ?)");
 				
 				statement.setString(1, kit.getName());
 				statement.setBytes(2, serialize(kit.getInventory()));
@@ -70,7 +69,7 @@ public abstract class SQLKits extends SQLUtils {
 				
 				statement.close();
 			} catch (SQLException | IOException e) {
-				Main.getPlugin().getLogger().severe(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}
@@ -90,7 +89,7 @@ public abstract class SQLKits extends SQLUtils {
 				
 				statement.close();
 			} catch (SQLException | IOException e) {
-				Main.getPlugin().getLogger().severe(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}
@@ -108,7 +107,7 @@ public abstract class SQLKits extends SQLUtils {
 				}
 			}
 		} catch (SQLException | ClassNotFoundException | IOException e) {
-			Main.getPlugin().getLogger().severe(e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return kit;
@@ -122,7 +121,7 @@ public abstract class SQLKits extends SQLUtils {
 			
 			statement.close();
 		}catch (SQLException e) {
-			Main.getPlugin().getLogger().severe(e.getMessage());
+			e.printStackTrace();
 		} 
 	}
 	
@@ -138,7 +137,7 @@ public abstract class SQLKits extends SQLUtils {
 				kitList.put(kit.getName(), kit);
 			}
 		} catch (SQLException | ClassNotFoundException | IOException e) {
-			Main.getPlugin().getLogger().severe(e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return kitList;

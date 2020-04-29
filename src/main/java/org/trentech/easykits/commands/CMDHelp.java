@@ -12,44 +12,44 @@ public class CMDHelp {
 			sender.sendMessage(ChatColor.YELLOW + "/kit -or- /k");
 			sender.sendMessage(ChatColor.YELLOW + "/kit [kitname]");	
 			sender.sendMessage(ChatColor.YELLOW + "/kit help [command]");
-			if(sender.hasPermission("EasyKits.cmd.reload")) {
+			if(sender.hasPermission("easykits.cmd.reload")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit reload");
 			}
-			if(sender.hasPermission("EasyKits.cmd.create")) {
+			if(sender.hasPermission("easyKits.cmd.create")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit create <kitname>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.remove")) {
+			if(sender.hasPermission("easyKits.cmd.remove")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit remove <kitname>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.limit")) {
+			if(sender.hasPermission("easyKits.cmd.limit")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit limit <kitname> <cooldown>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.cooldown")) {
+			if(sender.hasPermission("easyKits.cmd.cooldown")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit cooldown <kitname> <cooldown>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.price")) {
+			if(sender.hasPermission("easyKits.cmd.price")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit price <kitname> <price>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.reset")) {
+			if(sender.hasPermission("easyKits.cmd.reset")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit reset [cooldown | limit] <kitname> <player>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.give")) {
+			if(sender.hasPermission("easyKits.cmd.give")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit give <kitname> <player>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.give")) {
+			if(sender.hasPermission("easykits.cmd.give")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit book");
 			}
-			if(sender.hasPermission("EasyKits.cmd.view")) {
+			if(sender.hasPermission("easykits.cmd.view")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit view <kitname>");
 			}
-			if(sender.hasPermission("EasyKits.cmd.list")) {
+			if(sender.hasPermission("easykits.cmd.list")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit list");
 			}		
 		}else{
 			switch(args[1]) {
 			case "reload":
-				if(!sender.hasPermission("EasyKits.cmd.reload")) {
-					Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+				if(!sender.hasPermission("easykits.cmd.reload")) {
+					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -59,8 +59,8 @@ public class CMDHelp {
 				sender.sendMessage(ChatColor.YELLOW + "    /kit reload");
 				break;
 			case "create":
-				if(!sender.hasPermission("EasyKits.cmd.create")) {
-					Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+				if(!sender.hasPermission("easykits.cmd.create")) {
+					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -70,8 +70,8 @@ public class CMDHelp {
 				sender.sendMessage(ChatColor.YELLOW + "    /kit create PVP");
 				break;
 			case "remove":
-				if(!sender.hasPermission("EasyKits.cmd.remove")) {
-					Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+				if(!sender.hasPermission("easykits.cmd.remove")) {
+					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -81,8 +81,8 @@ public class CMDHelp {
 				sender.sendMessage(ChatColor.YELLOW + "    /kit remove PVP");
 				break;
 			case "limit":
-				if(!sender.hasPermission("EasyKits.cmd.limit")) {
-					Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+				if(!sender.hasPermission("easykits.cmd.limit")) {
+					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -92,8 +92,8 @@ public class CMDHelp {
 				sender.sendMessage(ChatColor.YELLOW + "    /kit limit PVP 5");
 				break;
 			case "cooldown":
-				if(!sender.hasPermission("EasyKits.cmd.cooldown")) {
-					Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+				if(!sender.hasPermission("easykits.cmd.cooldown")) {
+					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -107,8 +107,8 @@ public class CMDHelp {
 				sender.sendMessage(ChatColor.YELLOW + "    /kit cooldown PVP 0");
 				break;
 			case "price":
-				if(!sender.hasPermission("EasyKits.cmd.price")) {
-					Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+				if(!sender.hasPermission("easyKits.cmd.price")) {
+					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -119,8 +119,8 @@ public class CMDHelp {
 				sender.sendMessage(ChatColor.YELLOW + "    /kit price PVP 100.55");
 				break;
 			case "reset":
-				if(!sender.hasPermission("EasyKits.cmd.reset")) {
-					Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+				if(!sender.hasPermission("easyKits.cmd.reset")) {
+					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -131,8 +131,8 @@ public class CMDHelp {
 				sender.sendMessage(ChatColor.YELLOW + "    /kit reset limit PVP Notch");
 				break;
 			case "give":
-				if(!sender.hasPermission("EasyKits.cmd.give")) {
-					Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+				if(!sender.hasPermission("easykits.cmd.give")) {
+					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -142,8 +142,8 @@ public class CMDHelp {
 				sender.sendMessage(ChatColor.YELLOW + "    /kit give PVP Notch");
 				break;
 			case "book":
-				if(!sender.hasPermission("EasyKits.cmd.book")) {
-					Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+				if(!sender.hasPermission("easykits.cmd.book")) {
+					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -153,8 +153,8 @@ public class CMDHelp {
 				sender.sendMessage(ChatColor.YELLOW + "    /kit book");
 				break;
 			case "view":
-				if(!sender.hasPermission("EasyKits.cmd.view")) {
-					Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+				if(!sender.hasPermission("easykits.cmd.view")) {
+					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -164,8 +164,8 @@ public class CMDHelp {
 				sender.sendMessage(ChatColor.YELLOW + "    /kit view PVP");
 				break;
 			case "list":
-				if(!sender.hasPermission("EasyKits.cmd.list")) {
-					Notifications notify = new Notifications("Permission-Denied", null, sender.getName(), 0, null, 0);
+				if(!sender.hasPermission("easykits.cmd.list")) {
+					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -175,7 +175,7 @@ public class CMDHelp {
 				sender.sendMessage(ChatColor.YELLOW + "    /kit list");
 				break;
 			default:
-				Notifications notify = new Notifications("Invalid-Argument", null, sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("invalid-argument", null, sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 			}
 		}

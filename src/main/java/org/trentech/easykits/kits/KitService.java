@@ -19,12 +19,8 @@ import org.trentech.easykits.utils.Notifications;
 
 public class KitService {
 
-	private static KitService kitService;
-	
-	public KitService() {
-		kitService = this;
-	}
-	
+	private static KitService kitService = new KitService();
+
 	public static KitService instance() {
 		return kitService;
 	}

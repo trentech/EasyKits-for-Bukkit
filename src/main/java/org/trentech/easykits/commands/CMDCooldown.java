@@ -12,8 +12,8 @@ public class CMDCooldown {
 
 	public static void execute(CommandSender sender, String[] args) {
 
-		if(!sender.hasPermission("EasyKits.cmd.cooldown")){
-			Notifications notify = new Notifications("Permission-Denied", null, null, 0, null, 0);
+		if(!sender.hasPermission("easykits.cmd.cooldown")){
+			Notifications notify = new Notifications("permission-denied", null, null, 0, null, 0);
 			sender.sendMessage(notify.getMessage());
 			return;
 		}
@@ -22,21 +22,21 @@ public class CMDCooldown {
 			Optional<Kit> optional = KitService.instance().getKit(args[1]);
 			
 			if(!optional.isPresent()) {
-				Notifications notify = new Notifications("Kit-Not-Exist", args[1], sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("kit-not-exist", args[1], sender.getName(), 0, null, 0);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
 			Kit kit = optional.get();
 
 			if(!isValid(args[2])) {
-				Notifications notify = new Notifications("Invalid-Argument", args[1], sender.getName(), 0, args[2], 0);
+				Notifications notify = new Notifications("invalid-argument", args[1], sender.getName(), 0, args[2], 0);
 				sender.sendMessage(notify.getMessage());
 				sender.sendMessage(ChatColor.YELLOW + "/kit cooldown <kitname> <cooldown>");
 				return;
 			}
 
 			kit.setCooldown(getTimeInSeconds(args[2]));
-			Notifications notify = new Notifications("Set-Cooldown", kit.getName(), sender.getName(), 0, args[2], 0);
+			Notifications notify = new Notifications("set-cooldown", kit.getName(), sender.getName(), 0, args[2], 0);
 			sender.sendMessage(notify.getMessage());
 		}else{
 			sender.sendMessage(ChatColor.YELLOW + "/kit cooldown <kitname> <cooldown>");
