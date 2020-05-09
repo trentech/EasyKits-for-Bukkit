@@ -1,10 +1,9 @@
 package org.trentech.easykits.sql;
 
-import java.sql.DatabaseMetaData;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -15,34 +14,12 @@ public class SQLPlayers extends SQLUtils{
 
 	private static Object lock = new Object();
 
-	public static boolean tableExist(Player player) {
-		boolean bool = false;
-		
-		try {
-			Statement statement = getConnection().createStatement();
-			DatabaseMetaData metaData = statement.getConnection().getMetaData();
-			ResultSet result = metaData.getTables(null, null, player.getUniqueId().toString(), null);
-			
-			if (result.next()) {
-				bool = true;	
-			}
-			
-			statement.close();
-			result.close();
-		} catch (SQLException e) { 
-			e.printStackTrace();
-		}
-		
-		return bool;
-	}
-
 	public static void createTable(Player player) {
 		synchronized (lock) {
 			try {
-				PreparedStatement statement = prepare("CREATE TABLE `" + player.getUniqueId().toString() + "`( id INTEGER PRIMARY KEY, Kit TEXT, Date TEXT, Used INTEGER)");
-				statement.executeUpdate();
-				
-				statement.close();	
+				Connection connection = getConnection();
+				connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS `" + player.getUniqueId().toString() + "`(Kit TEXT, Date TEXT, Used INTEGER)");
+				connection.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -51,11 +28,10 @@ public class SQLPlayers extends SQLUtils{
 
 	public static void deleteTable(Player player) {
 		synchronized (lock) {
-			try {;
-				PreparedStatement statement = prepare("DROP TABLE `" + player.getUniqueId().toString() + "`");
-				statement.executeUpdate();
-				
-				statement.close();
+			try {
+				Connection connection = getConnection();
+				connection.createStatement().executeUpdate("DROP TABLE `" + player.getUniqueId().toString() + "`");
+				connection.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -65,7 +41,8 @@ public class SQLPlayers extends SQLUtils{
 	public static void add(Player player, KitUsage kitUsage) {
 		synchronized (lock) {
 			try {
-				PreparedStatement statement = prepare("INSERT into `" + player.getUniqueId().toString() + "` (Kit, Date, Used) VALUES (?, ?, ?)");
+				Connection connection = getConnection();
+				PreparedStatement statement = connection.prepareStatement("INSERT into `" + player.getUniqueId().toString() + "` (Kit, Date, Used) VALUES (?, ?, ?)");
 
 				statement.setString(1, kitUsage.getKitName());
 				statement.setString(2, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(kitUsage.getDate()));
@@ -73,6 +50,7 @@ public class SQLPlayers extends SQLUtils{
 				statement.executeUpdate();
 				
 				statement.close();
+				connection.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -82,7 +60,8 @@ public class SQLPlayers extends SQLUtils{
 	public static void update(Player player, KitUsage kitUsage) {
 		synchronized (lock) {
 			try {
-				PreparedStatement statement = prepare("UPDATE `" + player.getUniqueId().toString() + "` SET Date = ?, Used = ? WHERE Kit = ?");
+				Connection connection = getConnection();
+				PreparedStatement statement = connection.prepareStatement("UPDATE `" + player.getUniqueId().toString() + "` SET Date = ?, Used = ? WHERE Kit = ?");
 				
 				statement.setString(1, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(kitUsage.getDate()));
 				statement.setInt(2, kitUsage.getTimesUsed());
@@ -90,6 +69,7 @@ public class SQLPlayers extends SQLUtils{
 				statement.executeUpdate();
 				
 				statement.close();
+				connection.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -100,8 +80,8 @@ public class SQLPlayers extends SQLUtils{
 		KitUsage kitUsage = null;
 		
 		try {
-			PreparedStatement statement = prepare("SELECT * FROM `" + player.getUniqueId().toString() + "`");
-			ResultSet result = statement.executeQuery();
+			Connection connection = getConnection();
+			ResultSet result = connection.createStatement().executeQuery("SELECT * FROM `" + player.getUniqueId().toString() + "`");
 
 			while (result.next()) {
 				if (result.getString("Kit").equalsIgnoreCase(kitName)) {
@@ -109,8 +89,8 @@ public class SQLPlayers extends SQLUtils{
 				}
 			}
 			
-			statement.close();
 			result.close();
+			connection.close();
 		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		}

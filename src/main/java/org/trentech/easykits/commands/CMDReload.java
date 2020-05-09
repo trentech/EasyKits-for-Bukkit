@@ -3,7 +3,6 @@ package org.trentech.easykits.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.trentech.easykits.Main;
-import org.trentech.easykits.sql.SQLUtils;
 import org.trentech.easykits.utils.Notifications;
 
 public class CMDReload {
@@ -17,13 +16,6 @@ public class CMDReload {
 		
 		Main.getPlugin().reloadConfig();
 		Main.getPlugin().saveConfig();
-
-		SQLUtils.dispose();
-		try {
-			SQLUtils.connect();
-		} catch (Exception e) {
-			Main.getPlugin().getLogger().severe(String.format("[%s] - Unable to connect to database!", new Object[] { Main.getPlugin().getDescription().getName() }));
-		}
 
 		sender.sendMessage(ChatColor.DARK_GREEN + "EasyKits Reloaded!");
 	}

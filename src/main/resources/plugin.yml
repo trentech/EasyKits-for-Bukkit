@@ -1,5 +1,5 @@
 name: EasyKits
-version: 2.3.0
+version: 2.3.1
 main: org.trentech.easykits.Main
 api-version: 1.13
 authors: [TrenTech]

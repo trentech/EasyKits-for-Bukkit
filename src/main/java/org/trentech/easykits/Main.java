@@ -10,7 +10,6 @@ import org.trentech.easykits.commands.CommandHandler;
 import org.trentech.easykits.events.MainListener;
 import org.trentech.easykits.events.SignListener;
 import org.trentech.easykits.sql.SQLKits;
-import org.trentech.easykits.sql.SQLUtils;
 import org.trentech.easykits.utils.Notifications;
 
 import net.milkbowl.vault.economy.Economy;
@@ -45,17 +44,7 @@ public class Main extends JavaPlugin {
 			getLogger().info(String.format("[%s] Vault found! Economy support enabled!", new Object[] { getDescription().getName() }));
 		}
 
-		try{
-			SQLUtils.connect();
-		}catch(Exception e){
-			getLogger().severe(String.format("[%s] Disabled! Unable to connect to database!", new Object[] { getDescription().getName() }));
-			return;
-		}
-		
-		if(!SQLKits.tableExist()) {
-			SQLKits.createTable();
-			getLogger().info("Creating Database tables!");
-		}
+		SQLKits.createTable();
     }
 
 	public static void registerEvents(org.bukkit.plugin.Plugin plugin, Listener... listeners) {

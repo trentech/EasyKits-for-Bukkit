@@ -32,11 +32,8 @@ public class MainListener implements Listener {
 	public void onPlayerLoginEvent(PlayerJoinEvent event){
 		Player player = event.getPlayer();
 
-		if(!SQLPlayers.tableExist(player)) {
-			Main.getPlugin().getLogger().info("Creating player table with id " + player.getUniqueId().toString());
-			SQLPlayers.createTable(player);
-		}
-		
+		SQLPlayers.createTable(player);
+
 		if(player.hasPlayedBefore()){
 			return;
 		}

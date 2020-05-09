@@ -3,11 +3,10 @@ package org.trentech.easykits.sql;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.sql.DatabaseMetaData;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,34 +19,12 @@ public abstract class SQLKits extends SQLUtils {
 
     private static Object lock = new Object();
 
-	public static boolean tableExist() {
-		boolean bool = false;
-		
-		try {
-			Statement statement = getConnection().createStatement();
-			DatabaseMetaData metaData = statement.getConnection().getMetaData();
-			ResultSet result = metaData.getTables(null, null, "kits" , null);
-			
-			if (result.next()) {
-				bool = true;	
-			}
-			
-			statement.close();
-			result.close();
-		} catch (SQLException e) { 
-			e.printStackTrace();
-		}
-		
-		return bool;
-	}
-
 	public static void createTable() {
 		synchronized (lock) {
 			try {
-				PreparedStatement statement = prepare("CREATE TABLE kits( id INTEGER PRIMARY KEY, Kit TEXT, Inventory BLOB, Armor BLOB, Price DOUBLE, Cooldown LONG, Limits INTEGER)");
-				statement.executeUpdate();
-				
-				statement.close();
+				Connection connection = getConnection();
+				connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS kits(Kit TEXT, Inventory BLOB, Armor BLOB, Price DOUBLE, Cooldown LONG, Limits INTEGER)");
+				connection.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -57,7 +34,8 @@ public abstract class SQLKits extends SQLUtils {
 	public static void create(Kit kit) {
 		synchronized (lock) {
 			try {
-				PreparedStatement statement = prepare("INSERT into kits (Kit, Inventory, Armor, Price, Cooldown, Limits) VALUES (?, ?, ?, ?, ?, ?)");
+				Connection connection = getConnection();
+				PreparedStatement statement = connection.prepareStatement("INSERT into kits (Kit, Inventory, Armor, Price, Cooldown, Limits) VALUES (?, ?, ?, ?, ?, ?)");
 				
 				statement.setString(1, kit.getName());
 				statement.setBytes(2, serialize(kit.getInventory()));
@@ -68,6 +46,7 @@ public abstract class SQLKits extends SQLUtils {
 				statement.executeUpdate();
 				
 				statement.close();
+				connection.close();
 			} catch (SQLException | IOException e) {
 				e.printStackTrace();
 			}
@@ -77,7 +56,8 @@ public abstract class SQLKits extends SQLUtils {
 	public static void update(Kit kit) {
 		synchronized (lock) {
 			try {
-				PreparedStatement statement = prepare("UPDATE kits SET Inventory = ?, Armor = ?, Price = ?, Cooldown = ?, Limits = ? WHERE Kit = ?");
+				Connection connection = getConnection();
+				PreparedStatement statement = connection.prepareStatement("UPDATE kits SET Inventory = ?, Armor = ?, Price = ?, Cooldown = ?, Limits = ? WHERE Kit = ?");
 				
 				statement.setBytes(1, serialize(kit.getInventory()));
 				statement.setBytes(2, serialize(kit.getEquipment()));
@@ -88,6 +68,7 @@ public abstract class SQLKits extends SQLUtils {
 				statement.executeUpdate();
 				
 				statement.close();
+				connection.close();
 			} catch (SQLException | IOException e) {
 				e.printStackTrace();
 			}
@@ -98,14 +79,17 @@ public abstract class SQLKits extends SQLUtils {
 		Optional<Kit> kit = Optional.empty();
 		
 		try {
-			PreparedStatement statement = prepare("SELECT * FROM kits");
-			ResultSet result = statement.executeQuery();
+			Connection connection = getConnection();
+			ResultSet result = connection.createStatement().executeQuery("SELECT * FROM kits");
 			
 			while (result.next()) {
 				if (result.getString("Kit").equalsIgnoreCase(name)) {
 					kit = Optional.of(new Kit(result.getString("Kit"), deserialize(result.getBytes("Inventory")), deserialize(result.getBytes("Armor")), result.getLong("Cooldown"), result.getDouble("Price"), result.getInt("Limits")));
 				}
 			}
+			
+			result.close();
+			connection.close();
 		} catch (SQLException | ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}
@@ -115,11 +99,13 @@ public abstract class SQLKits extends SQLUtils {
 	
 	public static void delete(String kitName) {
 		try {
-			PreparedStatement statement = prepare("DELETE from kits WHERE Kit = ?");
+			Connection connection = getConnection();
+			PreparedStatement statement = connection.prepareStatement("DELETE from kits WHERE Kit = ?");
 			statement.setString(1, kitName);
 			statement.executeUpdate();
 			
 			statement.close();
+			connection.close();
 		}catch (SQLException e) {
 			e.printStackTrace();
 		} 
@@ -129,13 +115,16 @@ public abstract class SQLKits extends SQLUtils {
 		ConcurrentHashMap<String, Kit> kitList = new ConcurrentHashMap<>();
 		
 		try {
-			PreparedStatement statement = prepare("SELECT * FROM kits");
-			ResultSet result = statement.executeQuery();
+			Connection connection = getConnection();
+			ResultSet result = connection.createStatement().executeQuery("SELECT * FROM kits");
 			
 			while (result.next()) {
 				Kit kit = new Kit(result.getString("Kit"), deserialize(result.getBytes("Inventory")), deserialize(result.getBytes("Armor")), result.getLong("Cooldown"), result.getDouble("Price"), result.getInt("Limits"));
 				kitList.put(kit.getName(), kit);
 			}
+			
+			result.close();
+			connection.close();
 		} catch (SQLException | ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 		}
