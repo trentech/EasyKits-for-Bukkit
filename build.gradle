@@ -12,7 +12,6 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 group = pluginGroup
 version = pluginVersion
-archivesBaseName = "easykits"
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -47,6 +46,7 @@ shadowJar {
     dependencies {
         include dependency("com.h2database:h2:1.4.200")
     }
+    archiveName = "easykits-${project.version}.jar"
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
