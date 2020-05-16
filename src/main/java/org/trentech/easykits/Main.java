@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.trentech.easykits.commands.CMDKit;
 import org.trentech.easykits.commands.CommandHandler;
 import org.trentech.easykits.events.MainListener;
 import org.trentech.easykits.events.SignListener;
@@ -36,6 +37,7 @@ public class Main extends JavaPlugin {
 
 		this.cmdExecutor = new CommandHandler();
 		getCommand("kit").setExecutor(cmdExecutor);
+		getCommand("kit").setTabCompleter(new CMDKit());
 		
 		if (!setupEconomy()) {
         	getLogger().warning(String.format("[%s] Vault not found! Economy support disabled!", new Object[] {getDescription().getName()}));

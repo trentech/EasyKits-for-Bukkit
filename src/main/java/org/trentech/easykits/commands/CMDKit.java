@@ -1,15 +1,21 @@
 package org.trentech.easykits.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.trentech.easykits.kits.Kit;
 import org.trentech.easykits.kits.KitService;
+import org.trentech.easykits.sql.SQLKits;
 import org.trentech.easykits.utils.Notifications;
 
-public class CMDKit {
+public class CMDKit implements TabCompleter {
 
 	public static void execute(CommandSender sender, String[] args) {
 		if(args.length == 1) {
@@ -73,4 +79,98 @@ public class CMDKit {
 		}	
 	}
 
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+		List<String> list = new ArrayList<>();
+		
+		if(!command.getName().equalsIgnoreCase("kit")) {
+			return new ArrayList<>();
+		}
+
+		if((args.length == 1 && args[0].equalsIgnoreCase("")) || args.length == 0) {
+			for(Entry<String, Kit> entry : SQLKits.all().entrySet()) {
+				list.add(entry.getKey());
+			}
+			if(sender.hasPermission("easykits.cmd.help")) {
+				list.add("help");
+			}
+			if(sender.hasPermission("easykits.cmd.reload")) {
+				list.add("reload");
+			}
+			if(sender.hasPermission("easykits.cmd.create")) {
+				list.add("create");
+			}
+			if(sender.hasPermission("easyKits.cmd.remove")) {
+				list.add("remove");
+			}
+			if(sender.hasPermission("easyKits.cmd.limit")) {
+				list.add("limit");
+			}
+			if(sender.hasPermission("easykits.cmd.cooldown")) {
+				list.add("cooldown");
+			}
+			if(sender.hasPermission("easykits.cmd.price")) {
+				list.add("price");
+			}
+			if(sender.hasPermission("easyKits.cmd.reset")) {
+				list.add("reset");
+			}
+			if(sender.hasPermission("easyKits.cmd.give")) {
+				list.add("give");
+			}
+			if(sender.hasPermission("easykits.cmd.book")) {
+				list.add("book");
+			}
+			if(sender.hasPermission("easykits.cmd.view")) {
+				list.add("view");
+			}
+			if(sender.hasPermission("easykits.cmd.list")) {
+				list.add("list");
+			}
+		} else if(args.length == 1) {
+			for(Entry<String, Kit> entry : SQLKits.all().entrySet()) {
+				if(entry.getKey().startsWith(args[0])) {
+					list.add(entry.getKey());
+				}
+			}
+			if("help".startsWith(args[0])) {
+				list.add("help");
+			}
+			if("reload".startsWith(args[0])) {
+				list.add("reload");
+			}
+			if("create".startsWith(args[0])) {
+				list.add("create");
+			}
+			if("remove".startsWith(args[0])) {
+				list.add("remove");
+			}
+			if("limit".startsWith(args[0])) {
+				list.add("limit");
+			}
+			if("cooldown".startsWith(args[0])) {
+				list.add("cooldown");
+			}
+			if("price".startsWith(args[0])) {
+				list.add("price");
+			}
+			if("reset".startsWith(args[0])) {
+				list.add("reset");
+			}
+			if("give".startsWith(args[0])) {
+				list.add("give");
+			}
+			if("book".startsWith(args[0])) {
+				list.add("book");
+			}
+			if("view".startsWith(args[0])) {
+				list.add("view");
+			}
+			if("list".startsWith(args[0])) {
+				list.add("list");
+			}
+		}
+		
+		return list;
+	}
 }
