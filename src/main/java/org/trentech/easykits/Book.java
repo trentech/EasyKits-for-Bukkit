@@ -93,7 +93,7 @@ public class Book {
 		
 		player.openInventory(kitInv);
 		if(warning == true){
-			Notifications notify = new Notifications("Kit-Book-Full", null, null, 0, null, 0);
+			Notifications notify = new Notifications("kit-book-full");
 			player.sendMessage(notify.getMessage());
 		}
 	}

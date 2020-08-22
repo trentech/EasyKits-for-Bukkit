@@ -49,7 +49,7 @@ public class CMDHelp {
 			switch(args[1]) {
 			case "reload":
 				if(!sender.hasPermission("easykits.cmd.reload")) {
-					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+					Notifications notify = new Notifications("permission-denied");
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -60,7 +60,7 @@ public class CMDHelp {
 				break;
 			case "create":
 				if(!sender.hasPermission("easykits.cmd.create")) {
-					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+					Notifications notify = new Notifications("permission-denied");
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -71,7 +71,7 @@ public class CMDHelp {
 				break;
 			case "remove":
 				if(!sender.hasPermission("easykits.cmd.remove")) {
-					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+					Notifications notify = new Notifications("permission-denied");
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -82,7 +82,7 @@ public class CMDHelp {
 				break;
 			case "limit":
 				if(!sender.hasPermission("easykits.cmd.limit")) {
-					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+					Notifications notify = new Notifications("permission-denied");
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -93,7 +93,7 @@ public class CMDHelp {
 				break;
 			case "cooldown":
 				if(!sender.hasPermission("easykits.cmd.cooldown")) {
-					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+					Notifications notify = new Notifications("permission-denied");
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -108,7 +108,7 @@ public class CMDHelp {
 				break;
 			case "price":
 				if(!sender.hasPermission("easyKits.cmd.price")) {
-					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+					Notifications notify = new Notifications("permission-denied");
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -120,7 +120,7 @@ public class CMDHelp {
 				break;
 			case "reset":
 				if(!sender.hasPermission("easyKits.cmd.reset")) {
-					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+					Notifications notify = new Notifications("permission-denied");
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -132,7 +132,7 @@ public class CMDHelp {
 				break;
 			case "give":
 				if(!sender.hasPermission("easykits.cmd.give")) {
-					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+					Notifications notify = new Notifications("permission-denied");
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -143,7 +143,7 @@ public class CMDHelp {
 				break;
 			case "book":
 				if(!sender.hasPermission("easykits.cmd.book")) {
-					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+					Notifications notify = new Notifications("permission-denied");
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -154,7 +154,7 @@ public class CMDHelp {
 				break;
 			case "view":
 				if(!sender.hasPermission("easykits.cmd.view")) {
-					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+					Notifications notify = new Notifications("permission-denied");
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -165,7 +165,7 @@ public class CMDHelp {
 				break;
 			case "list":
 				if(!sender.hasPermission("easykits.cmd.list")) {
-					Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+					Notifications notify = new Notifications("permission-denied");
 					sender.sendMessage(notify.getMessage());
 					break;
 				}
@@ -175,7 +175,7 @@ public class CMDHelp {
 				sender.sendMessage(ChatColor.YELLOW + "    /kit list");
 				break;
 			default:
-				Notifications notify = new Notifications("invalid-argument", null, sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("invalid-argument");
 				sender.sendMessage(notify.getMessage());
 			}
 		}

@@ -1,6 +1,7 @@
 package org.trentech.easykits.utils;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.trentech.easykits.Main;
 
 public class Notifications {
@@ -14,6 +15,33 @@ public class Notifications {
 	
 	public Notifications() {
 		
+	}
+	
+	public Notifications(String type) {
+		this.type = type;
+		this.kitName = null;
+		this.playerName = null;
+		this.price = 0;
+		this.cooldown = null;
+		this.limit = 0;	
+	}
+	
+	public Notifications(String type, String kitName) {
+		this.type = type;
+		this.kitName = kitName;
+		this.playerName = null;
+		this.price = 0;
+		this.cooldown = null;
+		this.limit = 0;	
+	}
+	
+	public Notifications(String type, String kitName, Player player) {
+		this.type = type;
+		this.kitName = kitName;
+		this.playerName = player.getName();
+		this.price = 0;
+		this.cooldown = null;
+		this.limit = 0;	
 	}
 	
 	public Notifications(String type, String kitName, String playerName, double price, String cooldown, int limit) {

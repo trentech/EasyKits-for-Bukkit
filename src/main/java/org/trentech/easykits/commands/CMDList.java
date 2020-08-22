@@ -16,7 +16,7 @@ public class CMDList {
 
 	public static void execute(CommandSender sender) {
 		if(!sender.hasPermission("easyKits.cmd.list")){
-			Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+			Notifications notify = new Notifications("permission-denied");
 			sender.sendMessage(notify.getMessage());
 			return;
 		}

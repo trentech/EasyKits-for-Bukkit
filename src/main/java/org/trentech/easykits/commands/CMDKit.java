@@ -20,7 +20,7 @@ public class CMDKit implements TabCompleter {
 	public static void execute(CommandSender sender, String[] args) {
 		if(args.length == 1) {
 			if(!(sender instanceof Player)) {
-				Notifications notify = new Notifications("not-player", null, sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("not-player");
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
@@ -29,7 +29,7 @@ public class CMDKit implements TabCompleter {
 			Optional<Kit> optional = KitService.instance().getKit(args[0]);
 			
 			if(!optional.isPresent()) {
-				Notifications notify = new Notifications("kit-not-exist", args[0], sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("kit-not-exist", args[0]);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}

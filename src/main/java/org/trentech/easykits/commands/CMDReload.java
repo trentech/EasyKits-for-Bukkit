@@ -9,7 +9,7 @@ public class CMDReload {
 	
 	public static void execute(CommandSender sender) {
 		if(!sender.hasPermission("easyKits.cmd.reload")){
-			Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+			Notifications notify = new Notifications("permission-denied");
 			sender.sendMessage(notify.getMessage());
 			return;
 		}

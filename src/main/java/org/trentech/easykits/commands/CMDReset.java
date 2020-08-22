@@ -18,7 +18,7 @@ public class CMDReset {
 
 	public static void execute(CommandSender sender, String[] args) {
 		if(!sender.hasPermission("easyKits.cmd.reset")){
-			Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+			Notifications notify = new Notifications("permission-denied");
 			sender.sendMessage(notify.getMessage());
 			return;
 		}
@@ -27,7 +27,7 @@ public class CMDReset {
 			Player player = Main.getPlugin().getServer().getPlayerExact(args[3]);
 
 			if(player == null || !player.isOnline()){
-				Notifications notify = new Notifications("no-player", null, args[2], 0, null, 0);
+				Notifications notify = new Notifications("no-player");
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
@@ -38,7 +38,7 @@ public class CMDReset {
 			Optional<Kit> optional = KitService.instance().getKit(args[1]);
 			
 			if(!optional.isPresent()) {
-				Notifications notify = new Notifications("kit-not-exist", args[1], sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("kit-not-exist", args[1]);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}

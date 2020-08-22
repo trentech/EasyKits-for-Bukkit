@@ -12,16 +12,18 @@ public class CMDPrice {
 
 	public static void execute(CommandSender sender, String[] args) {
 		if(!sender.hasPermission("easykits.cmd.price")){
-			Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+			Notifications notify = new Notifications("permission-denied");
 			sender.sendMessage(notify.getMessage());
 			return;
 		}
 		
 		if(args.length == 3){
-			Optional<Kit> optional = KitService.instance().getKit(args[1]);
+			KitService kitService = KitService.instance();
+			
+			Optional<Kit> optional = kitService.getKit(args[1]);
 			
 			if(!optional.isPresent()) {
-				Notifications notify = new Notifications("kit-not-exist", args[1], sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("kit-not-exist", args[1]);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
@@ -31,12 +33,14 @@ public class CMDPrice {
 			try{
 				Double.parseDouble(price);
 			}catch(NumberFormatException e) {
-				Notifications notify = new Notifications("invalid-number", null, sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("invalid-number");
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
 			
 			kit.setPrice(Double.parseDouble(price));
+			kitService.save(kit);
+			
 			Notifications notify = new Notifications("set-price", kit.getName(), sender.getName(), Double.parseDouble(price), null, 0);
 			sender.sendMessage(notify.getMessage());
 		}else{

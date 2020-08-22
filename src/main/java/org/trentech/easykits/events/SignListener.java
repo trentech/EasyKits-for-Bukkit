@@ -44,8 +44,8 @@ public class SignListener implements Listener{
         
 		Player player = event.getPlayer();
 		
-		if(!player.hasPermission("easyKits.sign.use")) {
-			Notifications notify = new Notifications("permission-denied", null, null, 0, null, 0);
+		if(!player.hasPermission("easykits.sign.use")) {
+			Notifications notify = new Notifications("permission-denied");
 			player.sendMessage(notify.getMessage());
 			event.setCancelled(true);
 			return;
@@ -56,7 +56,7 @@ public class SignListener implements Listener{
 		Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
 		
 		if (!optionalKit.isPresent()) {
-			Notifications notify = new Notifications("kit-not-exist", kitName, null, 0, null, 0);
+			Notifications notify = new Notifications("kit-not-exist", kitName);
 			player.sendMessage(notify.getMessage());
 			return;
 		}
@@ -95,14 +95,13 @@ public class SignListener implements Listener{
 	public void onSignPlace(SignChangeEvent event) {
 		String[] line = event.getLines();
 
-		String kitSign = "[Kit]";
-		if (!line[0].equalsIgnoreCase(kitSign)) {
+		if (!line[0].equalsIgnoreCase("[Kit]")) {
 			return;
 		}
 
 		Player player = event.getPlayer();
 		if(!player.hasPermission("easykits.sign.create")) {
-			Notifications notify = new Notifications("permission-denied", null, null, 0, null, 0);
+			Notifications notify = new Notifications("permission-denied");
 			player.sendMessage(notify.getMessage());
 			event.setCancelled(true);
 			return;
@@ -113,14 +112,14 @@ public class SignListener implements Listener{
 		Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
 		
 		if (!optionalKit.isPresent()) {
-			Notifications notify = new Notifications("kit-not-exist", kitName, null, 0, null, 0);
+			Notifications notify = new Notifications("kit-not-exist", kitName);
 			player.sendMessage(notify.getMessage());
 			event.setCancelled(true);
 			return;
 		}
 		Kit kit = optionalKit.get();
 		
-		String newLine = ChatColor.DARK_BLUE + kitSign;
+		String newLine = ChatColor.DARK_BLUE + "[Kit]";
 		event.setLine(0, newLine);					
 		event.setLine(3, null);
 		
@@ -147,7 +146,7 @@ public class SignListener implements Listener{
 		Player player = event.getPlayer();
 		
 		if(!player.hasPermission("easykits.sign.remove")) {
-			Notifications notify = new Notifications("permission-denied", null, null, 0, null, 0);
+			Notifications notify = new Notifications("permission-denied");
 			player.sendMessage(notify.getMessage());
 			event.setCancelled(true);
 			return;

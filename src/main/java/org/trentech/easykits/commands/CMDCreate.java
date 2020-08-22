@@ -15,14 +15,14 @@ public class CMDCreate {
 
 	public static void execute(CommandSender sender, String[] args) {		
 		if(!(sender instanceof Player)) {
-			Notifications notify = new Notifications("not-player", null, sender.getName(), 0, null, 0);
+			Notifications notify = new Notifications("not-player");
 			sender.sendMessage(notify.getMessage());
 			return;
 		}
 		
 		Player player = (Player) sender;	
 		if(!player.hasPermission("easykits.cmd.create")){
-			Notifications notify = new Notifications("permission-denied", null, sender.getName(), 0, null, 0);
+			Notifications notify = new Notifications("permission-denied");
 			player.sendMessage(notify.getMessage());
 			return;
 		}
@@ -33,7 +33,7 @@ public class CMDCreate {
 			Optional<Kit> optional = KitService.instance().getKit(args[1]);
 			
 			if(optional.isPresent()) {
-				Notifications notify = new Notifications("kit-exist", kitName, null, 0, null, 0);
+				Notifications notify = new Notifications("kit-exist", kitName);
 				player.sendMessage(notify.getMessage());
 				return;
 			}
@@ -46,7 +46,7 @@ public class CMDCreate {
 
 			if(!event.isCancelled()){
 				KitService.instance().save(kit);
-				Notifications notify = new Notifications("kit-created", kitName, sender.getName(), 0, null, 0);
+				Notifications notify = new Notifications("kit-created", kitName);
 				player.sendMessage(notify.getMessage());
 			}
 		}else{
