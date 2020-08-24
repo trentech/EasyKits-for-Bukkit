@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.trentech.easykits.kits.Kit;
 import org.trentech.easykits.kits.KitService;
 import org.trentech.easykits.utils.Notifications;
+import org.trentech.easykits.utils.Utils;
 
 public class CMDCooldown {
 
@@ -37,7 +38,7 @@ public class CMDCooldown {
 				return;
 			}
 
-			kit.setCooldown(getTimeInSeconds(args[2]));
+			kit.setCooldown(Utils.getTimeInSeconds(args[2]));
 			kitService.save(kit);
 			
 			Notifications notify = new Notifications("set-cooldown", kit.getName(), sender.getName(), 0, args[2], 0);
@@ -45,29 +46,6 @@ public class CMDCooldown {
 		}else{
 			sender.sendMessage(ChatColor.YELLOW + "/kit cooldown <kitname> <cooldown>");
 		}
-	}	
-	
-	public static long getTimeInSeconds(String time){
-		if(time.equalsIgnoreCase("0")) {
-			return 0;
-		}
-		
-		long seconds = 0;
-		
-		for(String arg : time.split(",")){
-			if(arg.matches("(\\d+)[s]$")){
-				seconds = Integer.parseInt(arg.replace("s", "")) + seconds;
-			}else if(arg.matches("(\\d+)[m]$")){
-				seconds = (Integer.parseInt(arg.replace("m", "")) * 60) + seconds;
-			}else if(arg.matches("(\\d+)[h]$")){
-				seconds = (Integer.parseInt(arg.replace("h", "")) * 3600) + seconds;
-			}else if(arg.matches("(\\d+)[d]$")){
-				seconds = (Integer.parseInt(arg.replace("d", "")) * 86400) + seconds;
-			}else if(arg.matches("(\\d+)[w]$")){
-				seconds = (Integer.parseInt(arg.replace("w", "")) * 604800) + seconds;
-			}
-		}
-		return seconds;
 	}
 	
 	private static boolean isValid(String time){
@@ -95,5 +73,4 @@ public class CMDCooldown {
 		}
 		return true;
 	}
-
 }

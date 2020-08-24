@@ -46,7 +46,7 @@ public class KitService {
 	}
 	
 	private void updateUsage(Kit kit, Player player) {
-		KitUsage kitUsage = SQLPlayers.getKitUsage(player, kit.getName());
+		KitUsage kitUsage = SQLPlayers.get(player, kit.getName());
 
 		if(!player.hasPermission("easykits.override.cooldown")) {
 			if(kit.getCooldown() > 0) {
@@ -62,13 +62,13 @@ public class KitService {
 
 		if(!player.hasPermission("easykits.override.price")) {
 			if(kit.getPrice() > 0) {
-				if(Main.getPlugin().supportsEconomy()) {
+				if(Main.getPlugin().getEconomy() != null) {
 					Main.getPlugin().getEconomy().withdrawPlayer(player, kit.getPrice());
 				}
 			}
 		}
 		
-		SQLPlayers.update(player, kitUsage);
+		SQLPlayers.save(player, kitUsage);
 	}
 	
 	public boolean setKit(Player player, Kit kit, boolean updateUsage) {
@@ -187,8 +187,10 @@ public class KitService {
 				index++;
 			}
 
-			updateUsage(kit, player);
-			
+			if(updateUsage) {
+				updateUsage(kit, player);
+			}
+
 			player.getInventory().setContents(tempInv.getContents());
 			
 			if(tempArm.getItem(0) != null){

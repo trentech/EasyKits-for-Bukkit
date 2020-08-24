@@ -58,7 +58,7 @@ public class Book {
 			ItemMeta itemMeta = kitItem.getItemMeta();
 			itemMeta.setDisplayName("EasyKits: " + kit.getName());
 			ArrayList<String> lore = new ArrayList<String>();
-			if(Main.getPlugin().supportsEconomy()){
+			if(Main.getPlugin().getEconomy() != null){
 				double price = kit.getPrice();
 				if(price > 0){		
 					if(!player.hasPermission("EasyKits.bypass.price")){

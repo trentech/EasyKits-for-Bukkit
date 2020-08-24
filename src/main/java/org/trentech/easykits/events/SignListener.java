@@ -22,22 +22,23 @@ import org.trentech.easykits.kits.Kit;
 import org.trentech.easykits.kits.KitService;
 import org.trentech.easykits.utils.Notifications;
 
-public class SignListener implements Listener{
+public class SignListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onSignUse(PlayerInteractEvent event) {
+		
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
 			return;
 		}
 		
 		if(!(event.getClickedBlock().getBlockData() instanceof Sign)) {
-			return;
+			return; // BROKEN!!!!
 		}
-		
+
 		Sign sign = (Sign) event.getClickedBlock().getState();
 		String[] line = sign.getLines();
-		String kitSign = ChatColor.DARK_BLUE + "[Kit]";
-		
+		String kitSign = "[Kit]";
+
 		if (!line[0].equalsIgnoreCase(kitSign)) {
 			return;
 		}

@@ -15,7 +15,7 @@ import org.trentech.easykits.utils.Notifications;
 public class CMDList {
 
 	public static void execute(CommandSender sender) {
-		if(!sender.hasPermission("easyKits.cmd.list")){
+		if(!sender.hasPermission("easykits.cmd.list")){
 			Notifications notify = new Notifications("permission-denied");
 			sender.sendMessage(notify.getMessage());
 			return;
@@ -27,14 +27,14 @@ public class CMDList {
 		for(Entry<String, Kit> entry : list.entrySet()) {
 			Kit kit = entry.getValue();
 			
-			if(sender.hasPermission("easyKits.kits." + kit.getName()) && !kit.getName().equalsIgnoreCase(Main.getPlugin().getConfig().getString("config.new-player-kit")) || sender instanceof ConsoleCommandSender) {
+			if(sender.hasPermission("easykits.kits." + kit.getName()) && !kit.getName().equalsIgnoreCase(Main.getPlugin().getConfig().getString("config.new-player-kit")) || sender instanceof ConsoleCommandSender) {
 				String kitMsg = ChatColor.YELLOW + "- " + kit.getName();
 				if(sender instanceof Player) {
 					Player player = (Player) sender;
 
 					double price = kit.getPrice();
 					if(price > 0) {
-						if(!player.hasPermission("easyKits.bypass.price")){
+						if(!player.hasPermission("easyKits.override.price")){
 							kitMsg = kitMsg + ":";
 							double balance = Main.getPlugin().getEconomy().getBalance(player);
 							if(balance < price) {

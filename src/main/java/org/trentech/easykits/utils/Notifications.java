@@ -54,37 +54,37 @@ public class Notifications {
 	}
 	
 	public void getMessages() {
-		Main.getMessages().put("permission-denied", Main.getPlugin().getConfig().getString("messages.permission-denied"));
-		Main.getMessages().put("kit-created", Main.getPlugin().getConfig().getString("messages.kit-created"));
-		Main.getMessages().put("kit-deleted", Main.getPlugin().getConfig().getString("messages.kit-deleted"));
-		Main.getMessages().put("kit-obtained", Main.getPlugin().getConfig().getString("messages.kit-obtained"));
-		Main.getMessages().put("kit-sent", Main.getPlugin().getConfig().getString("messages.kit-sent"));
-		Main.getMessages().put("kit-received", Main.getPlugin().getConfig().getString("messages.kit-received"));
-		Main.getMessages().put("kit-exist", Main.getPlugin().getConfig().getString("messages.kit-exist"));
-		Main.getMessages().put("kit-not-exist", Main.getPlugin().getConfig().getString("messages.kit-not-exist"));
-		Main.getMessages().put("get-kit-limit", Main.getPlugin().getConfig().getString("messages.get-kit-limit"));
-		Main.getMessages().put("set-kit-limit", Main.getPlugin().getConfig().getString("messages.set-kit-limit"));
-		Main.getMessages().put("reset-kit-limit", Main.getPlugin().getConfig().getString("messages.reset-kit-limit"));
-		Main.getMessages().put("get-cooldown", Main.getPlugin().getConfig().getString("messages.get-cooldown"));
-		Main.getMessages().put("set-cooldown", Main.getPlugin().getConfig().getString("messages.set-cooldown"));
-		Main.getMessages().put("reset-cooldown", Main.getPlugin().getConfig().getString("messages.reset-cooldown"));
-		Main.getMessages().put("get-price", Main.getPlugin().getConfig().getString("messages.get-price"));
-		Main.getMessages().put("set-price", Main.getPlugin().getConfig().getString("messages.set-price"));
-		Main.getMessages().put("insufficient-funds", Main.getPlugin().getConfig().getString("messages.insufficient-funds"));
-		Main.getMessages().put("inventory-space", Main.getPlugin().getConfig().getString("messages.inventory-space"));
-		Main.getMessages().put("new-player-kit", Main.getPlugin().getConfig().getString("messages.new-player-kit"));
-		Main.getMessages().put("kit-book-full", Main.getPlugin().getConfig().getString("messages.kit-book-full"));
-		Main.getMessages().put("not-player", Main.getPlugin().getConfig().getString("messages.not-player"));
-		Main.getMessages().put("no-player", Main.getPlugin().getConfig().getString("messages.no-player"));
-		Main.getMessages().put("invalid-number", Main.getPlugin().getConfig().getString("messages.invalid-number"));
-		Main.getMessages().put("invalid-argument", Main.getPlugin().getConfig().getString("messages.invalid-argument"));
-		Main.getMessages().put("db-fail", Main.getPlugin().getConfig().getString("messages.db-fail"));
+		Main.getPlugin().getMessages().put("permission-denied", Main.getPlugin().getConfig().getString("messages.permission-denied"));
+		Main.getPlugin().getMessages().put("kit-created", Main.getPlugin().getConfig().getString("messages.kit-created"));
+		Main.getPlugin().getMessages().put("kit-deleted", Main.getPlugin().getConfig().getString("messages.kit-deleted"));
+		Main.getPlugin().getMessages().put("kit-obtained", Main.getPlugin().getConfig().getString("messages.kit-obtained"));
+		Main.getPlugin().getMessages().put("kit-sent", Main.getPlugin().getConfig().getString("messages.kit-sent"));
+		Main.getPlugin().getMessages().put("kit-received", Main.getPlugin().getConfig().getString("messages.kit-received"));
+		Main.getPlugin().getMessages().put("kit-exist", Main.getPlugin().getConfig().getString("messages.kit-exist"));
+		Main.getPlugin().getMessages().put("kit-not-exist", Main.getPlugin().getConfig().getString("messages.kit-not-exist"));
+		Main.getPlugin().getMessages().put("get-kit-limit", Main.getPlugin().getConfig().getString("messages.get-kit-limit"));
+		Main.getPlugin().getMessages().put("set-kit-limit", Main.getPlugin().getConfig().getString("messages.set-kit-limit"));
+		Main.getPlugin().getMessages().put("reset-kit-limit", Main.getPlugin().getConfig().getString("messages.reset-kit-limit"));
+		Main.getPlugin().getMessages().put("get-cooldown", Main.getPlugin().getConfig().getString("messages.get-cooldown"));
+		Main.getPlugin().getMessages().put("set-cooldown", Main.getPlugin().getConfig().getString("messages.set-cooldown"));
+		Main.getPlugin().getMessages().put("reset-cooldown", Main.getPlugin().getConfig().getString("messages.reset-cooldown"));
+		Main.getPlugin().getMessages().put("get-price", Main.getPlugin().getConfig().getString("messages.get-price"));
+		Main.getPlugin().getMessages().put("set-price", Main.getPlugin().getConfig().getString("messages.set-price"));
+		Main.getPlugin().getMessages().put("insufficient-funds", Main.getPlugin().getConfig().getString("messages.insufficient-funds"));
+		Main.getPlugin().getMessages().put("inventory-space", Main.getPlugin().getConfig().getString("messages.inventory-space"));
+		Main.getPlugin().getMessages().put("new-player-kit", Main.getPlugin().getConfig().getString("messages.new-player-kit"));
+		Main.getPlugin().getMessages().put("kit-book-full", Main.getPlugin().getConfig().getString("messages.kit-book-full"));
+		Main.getPlugin().getMessages().put("not-player", Main.getPlugin().getConfig().getString("messages.not-player"));
+		Main.getPlugin().getMessages().put("no-player", Main.getPlugin().getConfig().getString("messages.no-player"));
+		Main.getPlugin().getMessages().put("invalid-number", Main.getPlugin().getConfig().getString("messages.invalid-number"));
+		Main.getPlugin().getMessages().put("invalid-argument", Main.getPlugin().getConfig().getString("messages.invalid-argument"));
+		Main.getPlugin().getMessages().put("db-fail", Main.getPlugin().getConfig().getString("messages.db-fail"));
 	}
 	
 	public String getMessage() {
 		String msg = null;
-		if(Main.getMessages().get(type) != null) {
-			msg = Main.getMessages().get(type);
+		if(Main.getPlugin().getMessages().get(type) != null) {
+			msg = Main.getPlugin().getMessages().get(type);
 			if(msg.contains("%K") && kitName != null) {
 				msg = msg.replaceAll("%K", kitName);
 			}

@@ -1,11 +1,12 @@
 name: EasyKits
-version: 2.3.3
+version: 2.3.4
 main: org.trentech.easykits.Main
 api-version: 1.13
 authors: [TrenTech]
 description: Kits for all!
 website: trentech.org
 softdepend: [Vault]
+load: POSTWORLD
 commands:
   kit:
     description: Kits command

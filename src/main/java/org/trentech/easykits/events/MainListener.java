@@ -170,7 +170,7 @@ public class MainListener implements Listener {
 		Player player = event.getPlayer();
 		Kit kit = event.getKit();
 		
-		if(!player.hasPermission("easykits.kit." + kit.getName())) {
+		if(!player.hasPermission("easykits.kits." + kit.getName())) {
 			player.sendMessage(ChatColor.RED + "You do not have permission to get " + kit.getName());
 			event.setCancelled(true);
 			return;
@@ -180,7 +180,7 @@ public class MainListener implements Listener {
 			return;
 		}
 		
-		KitUsage kitUsage = SQLPlayers.getKitUsage(player, kit.getName());
+		KitUsage kitUsage = SQLPlayers.get(player, kit.getName());
 
 		if(!player.hasPermission("easykits.override.cooldown")) {
 			if(kit.getCooldown() > 0) {
@@ -209,7 +209,7 @@ public class MainListener implements Listener {
 		
 		if(!player.hasPermission("easykits.override.price")) {
 			if(kit.getPrice() > 0){	
-				if(Main.getPlugin().supportsEconomy()) {
+				if(Main.getPlugin().getEconomy() != null) {
 					if(Main.getPlugin().getEconomy().getBalance(player) < kit.getPrice()){
 						player.sendMessage(ChatColor.RED + "You do not have enough money. Requires " + Main.getPlugin().getConfig().getString("config.currency-symbol") + kit.getPrice());
 						event.setCancelled(true);
@@ -219,41 +219,7 @@ public class MainListener implements Listener {
 			}
 		}
 	}
-	
-//	@EventHandler(priority = EventPriority.MONITOR)
-//	public void onKitCooldownEvent(KitPlayerCooldownEvent event) {
-//		if(event.getPlayer().hasPermission("EasyKits.bypass.cooldown")){
-//			event.setCancelled(true);
-//			return;
-//		}
-//	}
-//	
-//	@EventHandler(priority = EventPriority.MONITOR)
-//	public void onKitLimitEvent(KitPlayerLimitEvent event) {
-//		if(event.getPlayer().hasPermission("EasyKits.bypass.limit")){
-//			event.setCancelled(true);
-//	        return;
-//		}
-//	}
-//	
-//	@EventHandler(priority = EventPriority.MONITOR)
-//	public void onWithdrawMoneyEvent(WithdrawMoneyEvent event) {
-//		if(event.getPlayer().hasPermission("EasyKits.bypass.price")){
-//			event.setCancelled(true);
-//    		return;
-//		}
-//		if(!Main.getPlugin().supportsEconomy()){
-//			event.setCancelled(true);
-//    		return;
-//		}
-//		if(event.getKit().getPrice() == 0){
-//			event.setCancelled(true);
-//    		return;
-//		}
-//		Notifications notify = new Notifications("Get-Price", event.getKit().getName(), null, event.getKit().getPrice(), event.getKitUser().getCooldownTimeRemaining(), 0);
-//		event.getPlayer().sendMessage(notify.getMessage());
-//	}	
-	
+
 	// FIX BUKKIT STUPIDITY
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPrepareItem(final PrepareItemCraftEvent event) {

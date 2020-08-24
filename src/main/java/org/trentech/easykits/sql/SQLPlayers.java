@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Optional;
 
 import org.bukkit.entity.Player;
 import org.trentech.easykits.kits.KitUsage;
@@ -38,7 +39,15 @@ public class SQLPlayers extends SQLUtils{
 		}
 	}
 
-	public static void add(Player player, KitUsage kitUsage) {
+	public static void save(Player player, KitUsage kitUsage) {
+		if (SQLPlayers.getUsage(player, kitUsage.getKitName()).isPresent()) {
+			SQLPlayers.update(player, kitUsage);
+		} else {
+			SQLPlayers.create(player, kitUsage);
+		}
+	}
+	
+	private static void create(Player player, KitUsage kitUsage) {
 		synchronized (lock) {
 			try {
 				Connection connection = getConnection();
@@ -57,7 +66,7 @@ public class SQLPlayers extends SQLUtils{
 		}
 	}
 
-	public static void update(Player player, KitUsage kitUsage) {
+	private static void update(Player player, KitUsage kitUsage) {
 		synchronized (lock) {
 			try {
 				Connection connection = getConnection();
@@ -76,8 +85,8 @@ public class SQLPlayers extends SQLUtils{
 		}
 	}
 
-	public static KitUsage getKitUsage(Player player, String kitName) {
-		KitUsage kitUsage = null;
+	public static Optional<KitUsage> getUsage(Player player, String kitName) {
+		Optional<KitUsage> kitUsage = Optional.empty();
 		
 		try {
 			Connection connection = getConnection();
@@ -85,7 +94,7 @@ public class SQLPlayers extends SQLUtils{
 
 			while (result.next()) {
 				if (result.getString("Kit").equalsIgnoreCase(kitName)) {
-					kitUsage = new KitUsage(result.getString("Kit"), result.getInt("Used"), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(result.getString("Date")));
+					kitUsage = Optional.of(new KitUsage(result.getString("Kit"), result.getInt("Used"), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(result.getString("Date"))));
 				}
 			}
 			
@@ -94,11 +103,17 @@ public class SQLPlayers extends SQLUtils{
 		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		}
-		
-		if(kitUsage == null) {
+
+		return kitUsage;
+	}
+	
+	public static KitUsage get(Player player, String kitName) {
+		Optional<KitUsage> optional = SQLPlayers.getUsage(player, kitName);
+
+		if(optional.isPresent()) {
+			return optional.get();
+		} else {
 			return new KitUsage(kitName);
 		}
-		
-		return kitUsage;
 	}
 }

@@ -19,8 +19,7 @@ public class Main extends JavaPlugin {
 
 	private static Main plugin;
 	private static HashMap<String, String> messages = new HashMap<String, String>();
-	
-	private boolean econSupport = true;
+
 	private CommandHandler cmdExecutor;
 	private Economy economy;
 
@@ -40,10 +39,9 @@ public class Main extends JavaPlugin {
 		getCommand("kit").setTabCompleter(new CMDKit());
 		
 		if (!setupEconomy()) {
-        	getLogger().warning(String.format("[%s] Vault not found! Economy support disabled!", new Object[] {getDescription().getName()}));
-        	econSupport = false;
+        	getLogger().warning("Vault not found! Economy support disabled!");
 		}else{
-			getLogger().info(String.format("[%s] Vault found! Economy support enabled!", new Object[] { getDescription().getName() }));
+			getLogger().info("Vault found! Economy support enabled!");
 		}
 
 		SQLKits.createTable();
@@ -67,19 +65,16 @@ public class Main extends JavaPlugin {
 		return (economy != null);
 	}
 
-	public boolean supportsEconomy() {
-		return econSupport;
-	}
-	
 	public Economy getEconomy() {
 		return economy;
+	}
+	
+	public HashMap<String, String> getMessages() {
+		return messages;
 	}
 	
 	public static Main getPlugin() {
 		return plugin;
 	}
-	
-	public static HashMap<String, String> getMessages() {
-		return messages;
-	}
+
 }
