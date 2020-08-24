@@ -30,19 +30,18 @@ public class SignListener implements Listener {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
 			return;
 		}
-		
-		if(!(event.getClickedBlock().getBlockData() instanceof Sign)) {
-			return; // BROKEN!!!!
+
+		if(!(event.getClickedBlock().getState() instanceof Sign)) {
+			return;
 		}
 
 		Sign sign = (Sign) event.getClickedBlock().getState();
 		String[] line = sign.getLines();
-		String kitSign = "[Kit]";
 
-		if (!line[0].equalsIgnoreCase(kitSign)) {
+		if (!ChatColor.stripColor(line[0]).equalsIgnoreCase("[Kit]")) {
 			return;
 		}
-        
+
 		Player player = event.getPlayer();
 		
 		if(!player.hasPermission("easykits.sign.use")) {
@@ -52,7 +51,7 @@ public class SignListener implements Listener {
 			return;
 		}
 
-		String kitName = line[1];
+		String kitName = ChatColor.stripColor(line[1]);
 
 		Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
 		
@@ -138,9 +137,8 @@ public class SignListener implements Listener {
 		
 		Sign sign = (Sign) event.getBlock().getState();
 		String[] line = sign.getLines();
-		String kitSign = ChatColor.DARK_BLUE + "[Kit]";
-		
-		if (!line[0].equalsIgnoreCase(kitSign)){
+
+		if (!ChatColor.stripColor(line[0]).equalsIgnoreCase("[Kit]")){
 			return;
 		}
         
