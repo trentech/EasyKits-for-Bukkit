@@ -5,10 +5,12 @@ config:
   default-cooldown: 0
   default-kit-limit: 0
   default-price: 0
+# 'NONE' to disable. Permission assignment is still required for this to function. Price/Limit/Cooldowns are overidden for new player kits.
   new-player-kit: starter
+# 'NONE' to disable. Permission assignment is still required for this to function. Price/Limit/Cooldowns are overidden for new player kits.
+  death-kit: death
   sign-action: view
   currency-symbol: $
-  
 messages:
   permission-denied: '&4You do not have permission!'
   kit-created: '&2%K created successfully!'

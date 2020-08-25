@@ -74,6 +74,9 @@ public class CMDKit implements TabCompleter {
 				sender.sendMessage(ChatColor.YELLOW + "/kit view <kitname>");
 			}
 			if(sender.hasPermission("easykits.cmd.list")) {
+				sender.sendMessage(ChatColor.YELLOW + "/kit info <kitname>");
+			}
+			if(sender.hasPermission("easykits.cmd.list")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit list");
 			}
 		}	
@@ -126,6 +129,9 @@ public class CMDKit implements TabCompleter {
 			}
 			if(sender.hasPermission("easykits.cmd.list")) {
 				list.add("list");
+			}
+			if(sender.hasPermission("easykits.cmd.info")) {
+				list.add("info");
 			}
 		} else if(args.length == 1) {
 			for(Entry<String, Kit> entry : SQLKits.all().entrySet()) {

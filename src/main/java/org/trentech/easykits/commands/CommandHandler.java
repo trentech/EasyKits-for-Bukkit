@@ -30,6 +30,8 @@ public class CommandHandler implements CommandExecutor {
 					CMDList.execute(sender);
 				}else if(args[0].equalsIgnoreCase("view")){
 					CMDView.execute(sender, args);
+				}else if(args[0].equalsIgnoreCase("info")){
+					CMDInfo.execute(sender, args);
 				}else if(args[0].equalsIgnoreCase("reset")){
 					CMDReset.execute(sender, args);
 				}else if(args[0].equalsIgnoreCase("help")){

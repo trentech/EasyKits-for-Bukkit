@@ -12,7 +12,6 @@ import org.trentech.easykits.utils.Utils;
 public class CMDCooldown {
 
 	public static void execute(CommandSender sender, String[] args) {
-
 		if(!sender.hasPermission("easykits.cmd.cooldown")){
 			Notifications notify = new Notifications("permission-denied");
 			sender.sendMessage(notify.getMessage());

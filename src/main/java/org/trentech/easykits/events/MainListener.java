@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.trentech.easykits.Book;
 import org.trentech.easykits.Main;
@@ -52,9 +53,40 @@ public class MainListener implements Listener {
 		}
 		Kit kit = optionalKit.get();
 
-		KitService.instance().setKit(player, kit, true);
+		if(!player.hasPermission("easykits.kits." + kitName)) {
+			Main.getPlugin().getLogger().warning(ChatColor.RED + "Could not give new player kit because " + player.getName() + " does not have permission.");
+			return;
+		}
+
+		KitService.instance().setKit(player, kit, false);
 	}
 
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerRespawnEvent(PlayerRespawnEvent event){
+		Player player = event.getPlayer();
+		
+		String kitName = Main.getPlugin().getConfig().getString("config.death-kit");
+		
+		if(kitName.equalsIgnoreCase("NONE")) {
+			return;
+		}
+		
+		Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
+		
+		if(!optionalKit.isPresent()) {
+			Main.getPlugin().getLogger().warning(ChatColor.RED + "Could not give death kit because " + kitName + " does not exist.");
+			return;
+		}
+		Kit kit = optionalKit.get();
+
+		if(!player.hasPermission("easykits.kits." + kitName)) {
+			Main.getPlugin().getLogger().warning(ChatColor.RED + "Could not give death kit because " + player.getName() + " does not have permission.");
+			return;
+		}
+
+		KitService.instance().setKit(player, kit, false);
+	}
+	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerClickKitEvent(InventoryClickEvent event){
 		if(!event.getView().getTitle().contains("EasyKits:")){
@@ -167,19 +199,19 @@ public class MainListener implements Listener {
 
 	@EventHandler
 	public void onKitEventEventGet(KitEvent.Get event) {
+		if(!event.doChecks()) {
+			return;
+		}
+		
 		Player player = event.getPlayer();
 		Kit kit = event.getKit();
-		
+
 		if(!player.hasPermission("easykits.kits." + kit.getName())) {
 			player.sendMessage(ChatColor.RED + "You do not have permission to get " + kit.getName());
 			event.setCancelled(true);
 			return;
 		}
 
-		if(!event.doChecks()) {
-			return;
-		}
-		
 		KitUsage kitUsage = SQLPlayers.get(player, kit.getName());
 
 		if(!player.hasPermission("easykits.override.cooldown")) {

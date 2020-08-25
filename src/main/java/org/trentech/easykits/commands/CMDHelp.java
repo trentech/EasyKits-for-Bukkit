@@ -44,7 +44,10 @@ public class CMDHelp {
 			}
 			if(sender.hasPermission("easykits.cmd.list")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit list");
-			}		
+			}
+			if(sender.hasPermission("easykits.cmd.info")) {
+				sender.sendMessage(ChatColor.YELLOW + "/kit info <kitname>");
+			}
 		}else{
 			switch(args[1]) {
 			case "reload":
@@ -173,6 +176,17 @@ public class CMDHelp {
 				sender.sendMessage(ChatColor.YELLOW + "    List of Available Kits.");
 				sender.sendMessage(ChatColor.DARK_GREEN + "" + ChatColor.UNDERLINE + "Example:\n");
 				sender.sendMessage(ChatColor.YELLOW + "    /kit list");
+				break;
+			case "info":
+				if(!sender.hasPermission("easykits.cmd.info")) {
+					Notifications notify = new Notifications("permission-denied");
+					sender.sendMessage(notify.getMessage());
+					break;
+				}
+				sender.sendMessage(ChatColor.DARK_GREEN + "" + ChatColor.UNDERLINE + "Description:\n");
+				sender.sendMessage(ChatColor.YELLOW + "    Show limit, cooldown and price of kit");
+				sender.sendMessage(ChatColor.DARK_GREEN + "" + ChatColor.UNDERLINE + "Example:\n");
+				sender.sendMessage(ChatColor.YELLOW + "    /kit info PVP");
 				break;
 			default:
 				Notifications notify = new Notifications("invalid-argument");
