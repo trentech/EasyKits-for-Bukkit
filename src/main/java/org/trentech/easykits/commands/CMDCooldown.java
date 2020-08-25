@@ -41,7 +41,7 @@ public class CMDCooldown {
 			kit.setCooldown(Utils.getTimeInSeconds(args[2]));
 			kitService.save(kit);
 			
-			Notifications notify = new Notifications("set-cooldown", kit.getName(), sender.getName(), 0, args[2], 0);
+			Notifications notify = new Notifications("set-cooldown", kit.getName(), sender.getName(), args[2]);
 			sender.sendMessage(notify.getMessage());
 		}else{
 			sender.sendMessage(ChatColor.YELLOW + "/kit cooldown <kitname> <cooldown>");

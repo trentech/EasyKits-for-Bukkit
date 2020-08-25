@@ -50,7 +50,7 @@ public class CMDReset {
 				try {
 					kitUsage.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2000-01-01 12:00:00"));
 					SQLPlayers.save(player, kitUsage);
-					Notifications notify = new Notifications("set-cooldown", kitName, player.getName(), 0, "NONE", 0);
+					Notifications notify = new Notifications("set-cooldown", kitName, player.getName(), "NONE");
 					sender.sendMessage(notify.getMessage());
 					player.sendMessage(notify.getMessage());
 				} catch (ParseException e) {
@@ -59,7 +59,7 @@ public class CMDReset {
 			}else if(property.equalsIgnoreCase("limit")) {
 				kitUsage.setTimesUsed(0);
 				SQLPlayers.save(player, kitUsage);
-				Notifications notify = new Notifications("set-kit-limit", kitName, player.getName(), 0, null, 0);
+				Notifications notify = new Notifications("set-kit-limit", kitName, player.getName(), 0);
 				sender.sendMessage(notify.getMessage());
 				player.sendMessage(notify.getMessage());
 			}else{

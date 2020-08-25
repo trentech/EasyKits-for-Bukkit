@@ -69,7 +69,7 @@ public class MainListener implements Listener {
 
 			Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
 			if(!optionalKit.isPresent()){
-				Notifications notify = new Notifications("kit-not-exist", kitName, player);
+				Notifications notify = new Notifications("kit-not-exist", kitName, player.getName());
 				player.sendMessage(notify.getMessage());
 				return;
 			}
@@ -132,7 +132,7 @@ public class MainListener implements Listener {
 
 		Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
 		if(!optionalKit.isPresent()){
-			Notifications notify = new Notifications("kit-not-exist", kitName, player);
+			Notifications notify = new Notifications("kit-not-exist", kitName, player.getName());
 			player.sendMessage(notify.getMessage());
 			return;
 		}

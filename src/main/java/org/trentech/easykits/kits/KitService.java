@@ -104,14 +104,14 @@ public class KitService {
 						if(amount <= size){
 							tempInv.setItem(index, item);
 						}else{
-							Notifications notify = new Notifications("inventory-space", kit.getName(), player);
+							Notifications notify = new Notifications("inventory-space", kit.getName(), player.getName());
 							player.sendMessage(notify.getMessage());
 							return false;					
 						}
 					}else{
 						for(int i = 10; i <= 36; i++){
 							if(i == 36){
-								Notifications notify = new Notifications("inventory-space", kit.getName(), player);
+								Notifications notify = new Notifications("inventory-space", kit.getName(), player.getName());
 								player.sendMessage(notify.getMessage());
 								return false;
 							}
@@ -122,7 +122,7 @@ public class KitService {
 								}
 							}
 						}
-						Notifications notify = new Notifications("inventory-space", kit.getName(), player);
+						Notifications notify = new Notifications("inventory-space", kit.getName(), player.getName());
 						player.sendMessage(notify.getMessage());
 						return false;
 					}
@@ -138,7 +138,7 @@ public class KitService {
 						}else if(tempInv.firstEmpty() > -1){
 							tempInv.addItem(item);
 						}else{
-							Notifications notify = new Notifications("inventory-space", kit.getName(), player);
+							Notifications notify = new Notifications("inventory-space", kit.getName(), player.getName());
 							player.sendMessage(notify.getMessage());
 							return false;
 						}
@@ -151,7 +151,7 @@ public class KitService {
 						}else if(tempInv.firstEmpty() > -1){
 							tempInv.addItem(item);
 						}else{
-							Notifications notify = new Notifications("inventory-space", kit.getName(), player);
+							Notifications notify = new Notifications("inventory-space", kit.getName(), player.getName());
 							player.sendMessage(notify.getMessage());
 							return false;
 						}
@@ -164,7 +164,7 @@ public class KitService {
 						}else if(tempInv.firstEmpty() > -1){
 							tempInv.addItem(item);
 						}else{
-							Notifications notify = new Notifications("inventory-space", kit.getName(), player);
+							Notifications notify = new Notifications("inventory-space", kit.getName(), player.getName());
 							player.sendMessage(notify.getMessage());
 							return false;
 						}
@@ -177,7 +177,7 @@ public class KitService {
 						}else if(tempInv.firstEmpty() > -1){
 							tempInv.addItem(item);
 						}else{
-							Notifications notify = new Notifications("inventory-space", kit.getName(), player);
+							Notifications notify = new Notifications("inventory-space", kit.getName(), player.getName());
 							player.sendMessage(notify.getMessage());
 							return false;
 						}

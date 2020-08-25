@@ -25,8 +25,7 @@ import org.trentech.easykits.utils.Notifications;
 public class SignListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onSignUse(PlayerInteractEvent event) {
-		
+	public void onSignUse(PlayerInteractEvent event) {		
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
 			return;
 		}
@@ -81,8 +80,7 @@ public class SignListener implements Listener {
 			getKitMeta.setLore(getKitLores);
 			getKit.setItemMeta(getKitMeta);								
 			showInv.setItem(44, getKit);
-			player.openInventory(showInv);
-			
+			player.openInventory(showInv);		
 		}else if(Main.getPlugin().getConfig().getString("config.sign-action").equalsIgnoreCase("obtain")) {
 			KitService.instance().setKit(player, kit, true);
 		}else{
@@ -118,14 +116,13 @@ public class SignListener implements Listener {
 			return;
 		}
 		Kit kit = optionalKit.get();
-		
-		String newLine = ChatColor.DARK_BLUE + "[Kit]";
-		event.setLine(0, newLine);					
+
+		event.setLine(0, ChatColor.DARK_BLUE + "[Kit]");					
 		event.setLine(3, null);
 		
 		double price = kit.getPrice();
 		if(price > 0) {
-			event.setLine(2, ChatColor.GREEN + Double.toString(price));
+			event.setLine(2, ChatColor.GREEN + Main.getPlugin().getConfig().getString("config.currency-symbol") + Double.toString(price));
 		}
 	}
 	
@@ -150,6 +147,5 @@ public class SignListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}	
-	}
-	
+	}	
 }

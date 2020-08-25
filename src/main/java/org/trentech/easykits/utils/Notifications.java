@@ -1,10 +1,14 @@
 package org.trentech.easykits.utils;
 
+import java.util.HashMap;
+
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.trentech.easykits.Main;
 
 public class Notifications {
+	
+	private static HashMap<String, String> messages = new HashMap<String, String>();
 	
 	private String type;
 	private String kitName;
@@ -12,11 +16,7 @@ public class Notifications {
 	private double price;
 	private String cooldown;
 	private int limit;
-	
-	public Notifications() {
-		
-	}
-	
+
 	public Notifications(String type) {
 		this.type = type;
 		this.kitName = null;
@@ -35,61 +35,52 @@ public class Notifications {
 		this.limit = 0;	
 	}
 	
-	public Notifications(String type, String kitName, Player player) {
+	public Notifications(String type, String kitName, String playerName) {
 		this.type = type;
 		this.kitName = kitName;
-		this.playerName = player.getName();
+		this.playerName = playerName;
 		this.price = 0;
 		this.cooldown = null;
 		this.limit = 0;	
 	}
 	
-	public Notifications(String type, String kitName, String playerName, double price, String cooldown, int limit) {
+	public Notifications(String type, String kitName, String playerName, double price) {
 		this.type = type;
 		this.kitName = kitName;
 		this.playerName = playerName;
 		this.price = price;
+		this.cooldown = null;
+		this.limit = 0;	
+	}
+	
+	public Notifications(String type, String kitName, String playerName, String cooldown) {
+		this.type = type;
+		this.kitName = kitName;
+		this.playerName = playerName;
+		this.price = 0;
 		this.cooldown = cooldown;
+		this.limit = 0;	
+	}
+	
+	public Notifications(String type, String kitName, String playerName, int limit) {
+		this.type = type;
+		this.kitName = kitName;
+		this.playerName = playerName;
+		this.price = 0;
+		this.cooldown = null;
 		this.limit = limit;	
 	}
-	
-	public void getMessages() {
-		Main.getPlugin().getMessages().put("permission-denied", Main.getPlugin().getConfig().getString("messages.permission-denied"));
-		Main.getPlugin().getMessages().put("kit-created", Main.getPlugin().getConfig().getString("messages.kit-created"));
-		Main.getPlugin().getMessages().put("kit-deleted", Main.getPlugin().getConfig().getString("messages.kit-deleted"));
-		Main.getPlugin().getMessages().put("kit-obtained", Main.getPlugin().getConfig().getString("messages.kit-obtained"));
-		Main.getPlugin().getMessages().put("kit-sent", Main.getPlugin().getConfig().getString("messages.kit-sent"));
-		Main.getPlugin().getMessages().put("kit-received", Main.getPlugin().getConfig().getString("messages.kit-received"));
-		Main.getPlugin().getMessages().put("kit-exist", Main.getPlugin().getConfig().getString("messages.kit-exist"));
-		Main.getPlugin().getMessages().put("kit-not-exist", Main.getPlugin().getConfig().getString("messages.kit-not-exist"));
-		Main.getPlugin().getMessages().put("get-kit-limit", Main.getPlugin().getConfig().getString("messages.get-kit-limit"));
-		Main.getPlugin().getMessages().put("set-kit-limit", Main.getPlugin().getConfig().getString("messages.set-kit-limit"));
-		Main.getPlugin().getMessages().put("reset-kit-limit", Main.getPlugin().getConfig().getString("messages.reset-kit-limit"));
-		Main.getPlugin().getMessages().put("get-cooldown", Main.getPlugin().getConfig().getString("messages.get-cooldown"));
-		Main.getPlugin().getMessages().put("set-cooldown", Main.getPlugin().getConfig().getString("messages.set-cooldown"));
-		Main.getPlugin().getMessages().put("reset-cooldown", Main.getPlugin().getConfig().getString("messages.reset-cooldown"));
-		Main.getPlugin().getMessages().put("get-price", Main.getPlugin().getConfig().getString("messages.get-price"));
-		Main.getPlugin().getMessages().put("set-price", Main.getPlugin().getConfig().getString("messages.set-price"));
-		Main.getPlugin().getMessages().put("insufficient-funds", Main.getPlugin().getConfig().getString("messages.insufficient-funds"));
-		Main.getPlugin().getMessages().put("inventory-space", Main.getPlugin().getConfig().getString("messages.inventory-space"));
-		Main.getPlugin().getMessages().put("new-player-kit", Main.getPlugin().getConfig().getString("messages.new-player-kit"));
-		Main.getPlugin().getMessages().put("kit-book-full", Main.getPlugin().getConfig().getString("messages.kit-book-full"));
-		Main.getPlugin().getMessages().put("not-player", Main.getPlugin().getConfig().getString("messages.not-player"));
-		Main.getPlugin().getMessages().put("no-player", Main.getPlugin().getConfig().getString("messages.no-player"));
-		Main.getPlugin().getMessages().put("invalid-number", Main.getPlugin().getConfig().getString("messages.invalid-number"));
-		Main.getPlugin().getMessages().put("invalid-argument", Main.getPlugin().getConfig().getString("messages.invalid-argument"));
-		Main.getPlugin().getMessages().put("db-fail", Main.getPlugin().getConfig().getString("messages.db-fail"));
-	}
-	
+
 	public String getMessage() {
 		String msg = null;
-		if(Main.getPlugin().getMessages().get(type) != null) {
-			msg = Main.getPlugin().getMessages().get(type);
+		if(messages.get(type) != null) {
+			msg = messages.get(type);
+			
 			if(msg.contains("%K") && kitName != null) {
 				msg = msg.replaceAll("%K", kitName);
 			}
 			if(msg.contains("%M") && price != 0) {
-				msg = msg.replaceAll("%M", Double.toString(price));
+				msg = msg.replaceAll("%M", Main.getPlugin().getConfig().getString("config.currency-symbol") + Double.toString(price));
 			}
 			if(msg.contains("%T") && cooldown != null) {
 				msg = msg.replaceAll("%T", cooldown);
@@ -103,8 +94,37 @@ public class Notifications {
 		}else{
 			throw new NullPointerException("Message Missing from Config!");
 		}
+
+		return ChatColor.translateAlternateColorCodes('&', msg);
+	}
+	
+	public static void init() {
+		FileConfiguration config = Main.getPlugin().getConfig();
 		
-		String message = ChatColor.translateAlternateColorCodes('&', msg);
-		return message;
+		messages.put("permission-denied", config.getString("messages.permission-denied"));
+		messages.put("kit-created", config.getString("messages.kit-created"));
+		messages.put("kit-deleted", config.getString("messages.kit-deleted"));
+		messages.put("kit-obtained", config.getString("messages.kit-obtained"));
+		messages.put("kit-sent", config.getString("messages.kit-sent"));
+		messages.put("kit-received", config.getString("messages.kit-received"));
+		messages.put("kit-exist", config.getString("messages.kit-exist"));
+		messages.put("kit-not-exist", config.getString("messages.kit-not-exist"));
+		messages.put("get-kit-limit", config.getString("messages.get-kit-limit"));
+		messages.put("set-kit-limit", config.getString("messages.set-kit-limit"));
+		messages.put("reset-kit-limit", config.getString("messages.reset-kit-limit"));
+		messages.put("get-cooldown", config.getString("messages.get-cooldown"));
+		messages.put("set-cooldown", config.getString("messages.set-cooldown"));
+		messages.put("reset-cooldown", config.getString("messages.reset-cooldown"));
+		messages.put("get-price", config.getString("messages.get-price"));
+		messages.put("set-price", config.getString("messages.set-price"));
+		messages.put("insufficient-funds", config.getString("messages.insufficient-funds"));
+		messages.put("inventory-space", config.getString("messages.inventory-space"));
+		messages.put("new-player-kit", config.getString("messages.new-player-kit"));
+		messages.put("kit-book-full", config.getString("messages.kit-book-full"));
+		messages.put("not-player", config.getString("messages.not-player"));
+		messages.put("no-player", config.getString("messages.no-player"));
+		messages.put("invalid-number", config.getString("messages.invalid-number"));
+		messages.put("invalid-argument", config.getString("messages.invalid-argument"));
+		messages.put("db-fail", config.getString("messages.db-fail"));
 	}
 }

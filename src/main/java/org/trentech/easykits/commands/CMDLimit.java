@@ -41,7 +41,7 @@ public class CMDLimit {
 			kit.setLimit(Integer.parseInt(limit));
 			kitService.save(kit);
 			
-			Notifications notify = new Notifications("set-kit-limit", kit.getName(), sender.getName(), 0, null, Integer.parseInt(limit));
+			Notifications notify = new Notifications("set-kit-limit", kit.getName(), sender.getName(), Integer.parseInt(limit));
 			sender.sendMessage(notify.getMessage());
 		}else{
 			sender.sendMessage(ChatColor.YELLOW + "/kit limit <kitname> <limit>");

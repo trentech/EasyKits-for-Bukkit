@@ -41,7 +41,7 @@ public class CMDPrice {
 			kit.setPrice(Double.parseDouble(price));
 			kitService.save(kit);
 			
-			Notifications notify = new Notifications("set-price", kit.getName(), sender.getName(), Double.parseDouble(price), null, 0);
+			Notifications notify = new Notifications("set-price", kit.getName(), sender.getName(), Double.parseDouble(price));
 			sender.sendMessage(notify.getMessage());
 		}else{
 			sender.sendMessage(ChatColor.YELLOW + "/kit price <kitname> <price>");

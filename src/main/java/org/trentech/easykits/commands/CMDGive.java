@@ -50,9 +50,9 @@ public class CMDGive {
 				}
 			}
 
-			Notifications notify = new Notifications("kit-received", kit.getName(), sender.getName(), kit.getPrice(), null, 0);
+			Notifications notify = new Notifications("kit-received", kit.getName(), sender.getName(), kit.getPrice());
 			reciever.sendMessage(notify.getMessage());
-			notify = new Notifications("Kit-Sent", kit.getName(), reciever.getName(), 0, null, 0);
+			notify = new Notifications("Kit-Sent", kit.getName(), reciever.getName());
 			sender.sendMessage(notify.getMessage());
 		}else{
 			sender.sendMessage(ChatColor.YELLOW + "/kit give <kitname> <player>");

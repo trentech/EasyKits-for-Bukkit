@@ -1,9 +1,8 @@
 package org.trentech.easykits;
 
-import java.util.HashMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.trentech.easykits.commands.CMDKit;
@@ -18,7 +17,6 @@ import net.milkbowl.vault.economy.Economy;
 public class Main extends JavaPlugin {
 
 	private static Main plugin;
-	private static HashMap<String, String> messages = new HashMap<String, String>();
 
 	private CommandHandler cmdExecutor;
 	private Economy economy;
@@ -32,7 +30,7 @@ public class Main extends JavaPlugin {
     	getConfig().options().copyDefaults(true);
     	saveConfig();
 	
-		new Notifications().getMessages();
+		Notifications.init();
 
 		this.cmdExecutor = new CommandHandler();
 		getCommand("kit").setExecutor(cmdExecutor);
@@ -47,7 +45,7 @@ public class Main extends JavaPlugin {
 		SQLKits.createTable();
     }
 
-	public static void registerEvents(org.bukkit.plugin.Plugin plugin, Listener... listeners) {
+	public static void registerEvents(Plugin plugin, Listener... listeners) {
 		for (Listener listener : listeners) {
 			Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
 		}
@@ -68,13 +66,8 @@ public class Main extends JavaPlugin {
 	public Economy getEconomy() {
 		return economy;
 	}
-	
-	public HashMap<String, String> getMessages() {
-		return messages;
-	}
-	
+
 	public static Main getPlugin() {
 		return plugin;
 	}
-
 }
