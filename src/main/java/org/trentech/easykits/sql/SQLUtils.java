@@ -11,7 +11,7 @@ public abstract class SQLUtils {
 
     public static Connection getConnection() {      
 		try {
-			Driver driver = (Driver) Class.forName("org.h2.Driver").newInstance();
+			Driver driver = (Driver) Class.forName("org.trentech.easykits.h2.Driver").newInstance();
 	        Properties properties = new Properties();      
 	        Connection connection = driver.connect("jdbc:h2:" + Main.getPlugin().getDataFolder().getAbsolutePath() + "\\data.db;DB_CLOSE_DELAY=-1", properties);
 

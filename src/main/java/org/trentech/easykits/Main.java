@@ -45,7 +45,7 @@ public class Main extends JavaPlugin {
 		SQLKits.createTable();
     }
 
-	public static void registerEvents(Plugin plugin, Listener... listeners) {
+	private static void registerEvents(Plugin plugin, Listener... listeners) {
 		for (Listener listener : listeners) {
 			Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
 		}
