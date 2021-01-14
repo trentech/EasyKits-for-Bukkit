@@ -47,7 +47,7 @@ shadowJar {
         include dependency("com.h2database:h2:1.4.200")
     }
     relocate 'org.h2', 'org.trentech.easykits.h2'
-    archiveName = "easykits-${project.version}.jar"
+    archiveFileName = "easykits-${project.version}.jar"
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens

@@ -174,7 +174,7 @@ public class MainListener implements Listener {
 		
 		Bukkit.getServer().getPluginManager().callEvent(e);
 
-		if(!event.isCancelled()){
+		if(!e.isCancelled()){
 			Book.pageTwo(player, kit);
 		}	
 	}

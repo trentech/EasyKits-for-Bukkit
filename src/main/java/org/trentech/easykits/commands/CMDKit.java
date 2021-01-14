@@ -73,7 +73,7 @@ public class CMDKit implements TabCompleter {
 			if(sender.hasPermission("easykits.cmd.view")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit view <kitname>");
 			}
-			if(sender.hasPermission("easykits.cmd.list")) {
+			if(sender.hasPermission("easykits.cmd.info")) {
 				sender.sendMessage(ChatColor.YELLOW + "/kit info <kitname>");
 			}
 			if(sender.hasPermission("easykits.cmd.list")) {
