@@ -35,10 +35,10 @@ public class CMDReset {
 			String property = args[1];
 			String kitName = args[2];
 
-			Optional<Kit> optional = KitService.instance().getKit(args[1]);
+			Optional<Kit> optional = KitService.instance().getKit(kitName);
 			
 			if(!optional.isPresent()) {
-				Notifications notify = new Notifications("kit-not-exist", args[1]);
+				Notifications notify = new Notifications("kit-not-exist", kitName);
 				sender.sendMessage(notify.getMessage());
 				return;
 			}
