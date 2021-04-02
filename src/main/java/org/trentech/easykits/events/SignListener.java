@@ -35,9 +35,8 @@ public class SignListener implements Listener {
 		}
 
 		Sign sign = (Sign) event.getClickedBlock().getState();
-		String[] line = sign.getLines();
 
-		if (!ChatColor.stripColor(line[0]).equalsIgnoreCase("[Kit]")) {
+		if (!ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("[Kit]")) {
 			return;
 		}
 
@@ -50,7 +49,7 @@ public class SignListener implements Listener {
 			return;
 		}
 
-		String kitName = ChatColor.stripColor(line[1]);
+		String kitName = ChatColor.stripColor(sign.getLine(1));
 
 		Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
 		
@@ -65,7 +64,7 @@ public class SignListener implements Listener {
 			ItemStack[] inv = kit.getInventory();
 			ItemStack[] arm = kit.getEquipment();
 
-			Inventory showInv = Main.getPlugin().getServer().createInventory(player, 45, "EasyKits Kit: " + kit.getName());
+			Inventory showInv = Main.getPlugin().getServer().createInventory(player, 45, "EasyKits: " + kit.getName());
 			showInv.setContents(inv);								
 			int index = 36;
 			for(ItemStack a : arm){
@@ -118,7 +117,7 @@ public class SignListener implements Listener {
 		Kit kit = optionalKit.get();
 
 		event.setLine(0, ChatColor.DARK_BLUE + "[Kit]");					
-		event.setLine(3, null);
+		event.setLine(3, "");
 		
 		double price = kit.getPrice();
 		if(price > 0) {
