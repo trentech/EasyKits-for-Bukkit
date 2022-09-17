@@ -1,20 +1,13 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
-    }
+plugins {
+	id "java"
+	id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-apply plugin: 'java'
-apply plugin: 'com.github.johnrengelman.shadow'
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 group = pluginGroup
 version = pluginVersion
-
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
 
 repositories {
     mavenCentral()
@@ -35,25 +28,17 @@ repositories {
 }
 
 dependencies {
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
-    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
-    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
-    implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+    compileOnly 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
+    implementation group: 'com.h2database', name: 'h2', version: '2.1.214'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 }
 
 shadowJar {
     dependencies {
-        include dependency("com.h2database:h2:1.4.200")
+        include dependency("com.h2database:h2:2.1.214")
     }
     relocate 'org.h2', 'org.trentech.easykits.h2'
     archiveFileName = "easykits-${project.version}.jar"
-}
-
-import org.apache.tools.ant.filters.ReplaceTokens
-
-processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        filter ReplaceTokens, tokens: [version: version]
-    }
 }

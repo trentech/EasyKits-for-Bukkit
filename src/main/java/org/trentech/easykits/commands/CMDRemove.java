@@ -6,42 +6,42 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.trentech.easykits.events.KitEvent;
 import org.trentech.easykits.kits.Kit;
 import org.trentech.easykits.kits.KitService;
 import org.trentech.easykits.utils.Notifications;
 
 public class CMDRemove {
+	
+    public static void execute(CommandSender sender, String[] args) {   	
+        if (!sender.hasPermission("easykits.cmd.remove")) {
+            Notifications notify = new Notifications("permission-denied");
+            sender.sendMessage(notify.getMessage());
+            return;
+        }
+        
+        if (args.length == 2) {
+            Optional<Kit> optional = KitService.instance().getKit(args[1]);
 
-	public static void execute(CommandSender sender, String[] args) {
-		if(!sender.hasPermission("easykits.cmd.remove")){
-			Notifications notify = new Notifications("permission-denied");
-			sender.sendMessage(notify.getMessage());
-			return;
-		}
-		
-		if(args.length == 2){
-			Optional<Kit> optional = KitService.instance().getKit(args[1]);
-			
-			if(!optional.isPresent()) {
-				Notifications notify = new Notifications("kit-not-exist", args[1]);
-				sender.sendMessage(notify.getMessage());
-				return;
-			}
-			Kit kit = optional.get();
-			
-			KitEvent.Delete event = new KitEvent.Delete((Player) sender, kit);
+            if (!optional.isPresent()) {
+                Notifications notify = new Notifications("kit-not-exist", args[1]);
+                sender.sendMessage(notify.getMessage());
+                return;
+            }
+            Kit kit = optional.get();
 
-			Bukkit.getServer().getPluginManager().callEvent(event);
+            KitEvent.Delete event = new KitEvent.Delete((Player) sender, kit);
 
-			if(!event.isCancelled()){
-				KitService.instance().delete(kit.getName());
-				Notifications notify = new Notifications("kit-deleted", kit.getName());
-				sender.sendMessage(notify.getMessage());
-			}
-		}else{
-			sender.sendMessage(ChatColor.YELLOW + "/kit remove <kitname>");
-		}
-	}
+            Bukkit.getServer().getPluginManager().callEvent((Event) event);
 
+            if (!event.isCancelled()) {
+                KitService.instance().delete(kit.getName());
+                Notifications notify = new Notifications("kit-deleted", kit.getName());
+                sender.sendMessage(notify.getMessage());
+            }
+        } else {
+            sender.sendMessage(ChatColor.YELLOW + "/kit remove <kitname>");
+        }
+    }
 }

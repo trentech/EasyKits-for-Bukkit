@@ -13,50 +13,47 @@ import org.trentech.easykits.kits.KitService;
 import org.trentech.easykits.utils.Notifications;
 
 public class CMDGive {
+	
+    public static void execute(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("easykits.cmd.give")) {
+            Notifications notify = new Notifications("permission-denied");
+            sender.sendMessage(notify.getMessage());
+            return;
+        }
+        
+        if (args.length == 3) {
+            Player reciever = Main.getPlugin().getServer().getPlayerExact(args[2]);
 
-	public static void execute(CommandSender sender, String[] args) {
-		if(!sender.hasPermission("easykits.cmd.give")){
-			Notifications notify = new Notifications("permission-denied");
-			sender.sendMessage(notify.getMessage());
-			return;
-		}
-		
-		if(args.length == 3){
-			Player reciever = Main.getPlugin().getServer().getPlayerExact(args[2]);
+            if (reciever == null || !reciever.isOnline()) {
+                Notifications notifications = new Notifications("no-player");
+                sender.sendMessage(notifications.getMessage());
+                return;
+            }
+            
+            Optional<Kit> optional = KitService.instance().getKit(args[1]);
 
-			if(reciever == null || !reciever.isOnline()) {
-				Notifications notify = new Notifications("no-player");
-				sender.sendMessage(notify.getMessage());
-				return;
-			}
+            if (!optional.isPresent()) {
+                Notifications notifications = new Notifications("kit-not-exist", args[1]);
+                sender.sendMessage(notifications.getMessage());
+                return;
+            }
+            Kit kit = optional.get();
 
-			Optional<Kit> optional = KitService.instance().getKit(args[1]);
-			
-			if(!optional.isPresent()) {
-				Notifications notify = new Notifications("kit-not-exist", args[1]);
-				sender.sendMessage(notify.getMessage());
-				return;
-			}
-			Kit kit = optional.get();
+            KitEvent.Give event = new KitEvent.Give(reciever, kit);
 
-			KitEvent.Give event = new KitEvent.Give(reciever, kit);
+            Bukkit.getServer().getPluginManager().callEvent(event);
 
-			Bukkit.getServer().getPluginManager().callEvent(event);
+            if (!event.isCancelled() && !KitService.instance().setKit(reciever, kit, false)) {
+                sender.sendMessage(ChatColor.RED + "Could not give kit. Possibly need more inventory space.");
+                return;
+            }
 
-			if(!event.isCancelled()){
-				if(!KitService.instance().setKit(reciever, kit, false)) {
-					sender.sendMessage(ChatColor.RED + "Could not give kit. Possibly need more inventory space.");
-					return;
-				}
-			}
-
-			Notifications notify = new Notifications("kit-received", kit.getName(), sender.getName(), kit.getPrice());
-			reciever.sendMessage(notify.getMessage());
-			notify = new Notifications("kit-sent", kit.getName(), reciever.getName());
-			sender.sendMessage(notify.getMessage());
-		}else{
-			sender.sendMessage(ChatColor.YELLOW + "/kit give <kitname> <player>");
-		}
-	}
-
+            Notifications notify = new Notifications("kit-received", kit.getName(), sender.getName(), kit.getPrice());
+            reciever.sendMessage(notify.getMessage());
+            notify = new Notifications("kit-sent", kit.getName(), reciever.getName());
+            sender.sendMessage(notify.getMessage());
+        } else {
+            sender.sendMessage(ChatColor.YELLOW + "/kit give <kitname> <player>");
+        }
+    }
 }

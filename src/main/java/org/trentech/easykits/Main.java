@@ -1,5 +1,6 @@
 package org.trentech.easykits;
 
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -12,62 +13,57 @@ import org.trentech.easykits.events.SignListener;
 import org.trentech.easykits.sql.SQLKits;
 import org.trentech.easykits.utils.Notifications;
 
-import net.milkbowl.vault.economy.Economy;
-
 public class Main extends JavaPlugin {
+    private static Main plugin;
+    private CommandHandler cmdExecutor;
+    private Economy economy;
 
-	private static Main plugin;
+    public void onEnable() {
+        plugin = this;
 
-	private CommandHandler cmdExecutor;
-	private Economy economy;
+        registerEvents(this, new MainListener(), new SignListener());
 
-    @Override
-    public void onEnable(){
-    	plugin = this;
+        getConfig().options().copyDefaults(true);
+        saveConfig();
 
-    	registerEvents(this, new MainListener(), new SignListener());
-    	
-    	getConfig().options().copyDefaults(true);
-    	saveConfig();
-	
-		Notifications.init();
+        Notifications.init();
 
-		this.cmdExecutor = new CommandHandler();
-		getCommand("kit").setExecutor(cmdExecutor);
-		getCommand("kit").setTabCompleter(new CMDKit());
-		
-		if (!setupEconomy()) {
-        	getLogger().warning("Vault not found! Economy support disabled!");
-		}else{
-			getLogger().info("Vault found! Economy support enabled!");
-		}
+        this.cmdExecutor = new CommandHandler();
+        getCommand("kit").setExecutor(cmdExecutor);
+        getCommand("kit").setTabCompleter(new CMDKit());
 
-		SQLKits.createTable();
+        if (!setupEconomy()) {
+            getLogger().warning("Vault not found! Economy support disabled!");
+        } else {
+            getLogger().info("Vault found! Economy support enabled!");
+        }
+
+        SQLKits.createTable();
     }
 
-	private static void registerEvents(Plugin plugin, Listener... listeners) {
-		for (Listener listener : listeners) {
-			Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
-		}
-	}
+    private static void registerEvents(Plugin plugin, Listener... listeners) {
+        for (Listener listener : listeners) {
+            Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
+        }
+    }
 
-	private boolean setupEconomy() {
-		if(Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
-			RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-			
-			if (economyProvider != null) {
-				economy = economyProvider.getProvider();
-			}
-		}
+    private boolean setupEconomy() {
+        if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
+            RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
 
-		return (economy != null);
-	}
+            if (economyProvider != null) {
+                economy = economyProvider.getProvider();
+            }
+        }
 
-	public Economy getEconomy() {
-		return economy;
-	}
+        return (economy != null);
+    }
 
-	public static Main getPlugin() {
-		return plugin;
-	}
+    public Economy getEconomy() {
+        return economy;
+    }
+
+    public static Main getPlugin() {
+        return plugin;
+    }
 }

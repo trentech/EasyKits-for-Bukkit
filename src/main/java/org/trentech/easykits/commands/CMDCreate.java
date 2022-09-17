@@ -12,46 +12,45 @@ import org.trentech.easykits.kits.KitService;
 import org.trentech.easykits.utils.Notifications;
 
 public class CMDCreate {
+	
+    public static void execute(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player)) {
+            Notifications notify = new Notifications("not-player");
+            sender.sendMessage(notify.getMessage());
+            return;
+        }
+        
+        Player player = (Player) sender;
+        if (!player.hasPermission("easykits.cmd.create")) {
+            Notifications notify = new Notifications("permission-denied");
+            player.sendMessage(notify.getMessage());
+            return;
+        }
+        
+        if (args.length == 2) {
+            String kitName = args[1];
 
-	public static void execute(CommandSender sender, String[] args) {		
-		if(!(sender instanceof Player)) {
-			Notifications notify = new Notifications("not-player");
-			sender.sendMessage(notify.getMessage());
-			return;
-		}
-		
-		Player player = (Player) sender;	
-		if(!player.hasPermission("easykits.cmd.create")){
-			Notifications notify = new Notifications("permission-denied");
-			player.sendMessage(notify.getMessage());
-			return;
-		}
-		
-		if (args.length == 2){
-			String kitName = args[1];
-			
-			Optional<Kit> optional = KitService.instance().getKit(args[1]);
-			
-			if(optional.isPresent()) {
-				Notifications notify = new Notifications("kit-exist", kitName);
-				player.sendMessage(notify.getMessage());
-				return;
-			}
+            Optional<Kit> optional = KitService.instance().getKit(args[1]);
 
-			Kit kit = new Kit(kitName, player.getInventory().getContents(), player.getInventory().getArmorContents());
-			
-			KitEvent.Create event = new KitEvent.Create(player, kit);
+            if (optional.isPresent()) {
+                Notifications notify = new Notifications("kit-exist", kitName);
+                player.sendMessage(notify.getMessage());
+                return;
+            }
+            
+            Kit kit = new Kit(kitName, player.getInventory().getContents(), player.getInventory().getArmorContents());
 
-			Bukkit.getServer().getPluginManager().callEvent(event);
+            KitEvent.Create event = new KitEvent.Create(player, kit);
 
-			if(!event.isCancelled()){
-				KitService.instance().save(kit);
-				Notifications notify = new Notifications("kit-created", kitName);
-				player.sendMessage(notify.getMessage());
-			}
-		}else{
-			player.sendMessage(ChatColor.YELLOW + "/kit create <kitname>");
-		}
-	}
+            Bukkit.getServer().getPluginManager().callEvent(event);
 
+            if (!event.isCancelled()) {
+                KitService.instance().save(kit);
+                Notifications notify = new Notifications("kit-created", kitName);
+                player.sendMessage(notify.getMessage());
+            }
+        } else {
+            player.sendMessage(ChatColor.YELLOW + "/kit create <kitname>");
+        }
+    }
 }
