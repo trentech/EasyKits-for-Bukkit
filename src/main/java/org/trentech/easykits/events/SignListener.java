@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -35,12 +36,12 @@ public class SignListener implements Listener {
         }
 
         Sign sign = (Sign) event.getClickedBlock().getState();
+        
+        Player player = event.getPlayer();
 
-        if (!ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("[Kit]")) {
+        if (!ChatColor.stripColor(sign.getTargetSide(player).getLine(0)).equalsIgnoreCase("[Kit]")) {
             return;
         }
-
-        Player player = event.getPlayer();
 
         if (!player.hasPermission("easykits.sign.use")) {
             Notifications notify = new Notifications("permission-denied");
@@ -50,7 +51,7 @@ public class SignListener implements Listener {
             return;
         }
         
-        String kitName = ChatColor.stripColor(sign.getLine(1));
+        String kitName = ChatColor.stripColor(sign.getTargetSide(player).getLine(1));
 
         Optional<Kit> optionalKit = KitService.instance().getKit(kitName);
 
@@ -61,7 +62,9 @@ public class SignListener implements Listener {
         }
         Kit kit = optionalKit.get();
 
-        if (Main.getPlugin().getConfig().getString("config.sign-action").equalsIgnoreCase("view")) {
+        event.setCancelled(true);
+        
+        if (Main.getPlugin().getConfig().getString("config.sign-action").equalsIgnoreCase("view")) {        	
             ItemStack[] inv = kit.getInventory();
             ItemStack[] arm = kit.getEquipment();
 
@@ -132,9 +135,11 @@ public class SignListener implements Listener {
         }
 
         Sign sign = (Sign) event.getBlock().getState();
-        String[] line = sign.getLines();
-
-        if (!ChatColor.stripColor(line[0]).equalsIgnoreCase("[Kit]")) {
+        
+        String lineFront = sign.getSide(Side.FRONT).getLine(0);
+        String lineBack = sign.getSide(Side.BACK).getLine(0);
+        
+        if (!ChatColor.stripColor(lineFront).equalsIgnoreCase("[Kit]") && !ChatColor.stripColor(lineBack).equalsIgnoreCase("[Kit]")) {
             return;
         }
 
