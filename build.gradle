@@ -1,46 +1,54 @@
 plugins {
 	id "java"
-	id "com.github.johnrengelman.shadow" version "7.1.2"
-	id 'eclipse'
+	id "com.gradleup.shadow" version "9.3.0"
+	id "eclipse"
 }
 
 group = pluginGroup
 version = pluginVersion
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 repositories {
     mavenCentral()
 	gradlePluginPortal()
     maven {
-        name = 'spigotmc-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        name = "spigotmc-repo"
+        url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
     }
     maven {
-        name = 'sonatype'
-        url = 'https://oss.sonatype.org/content/groups/public/'
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
     }
     maven { 
-    	url 'https://jitpack.io'
+    	url "https://jitpack.io"
     }
     maven {
-    	url 'https://mvnrepository.com/artifact/com.h2database/h2'
+    	url "https://mvnrepository.com/artifact/com.h2database/h2"
     }
 }
 
 dependencies {
-    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-    compileOnly 'org.spigotmc:spigot-api:1.21.8-R0.1-SNAPSHOT'
-    compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
-    implementation group: 'com.h2database', name: 'h2', version: '2.2.220'
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    compileOnly "org.spigotmc:spigot-api:1.21.11-R0.1-SNAPSHOT"
+    compileOnly "com.github.MilkBowl:VaultAPI:8bad2c479f"
+    implementation group: "com.h2database", name: "h2", version: "2.3.232"
+    implementation fileTree(include: ["*.jar"], dir: "libs")
 }
 
-shadowJar {
+tasks.named("shadowJar") {
     dependencies {
-        include dependency("com.h2database:h2:2.2.220")
+        include dependency("com.h2database:h2:2.3.232")
     }
-    relocate 'org.h2', 'org.trentech.easykits.h2'
+    relocate "org.h2", "org.trentech.easykits.h2"
     archiveFileName = "easykits-${project.version}.jar"
+}
+
+tasks.named("build") {
+    dependsOn(shadowJar)
 }
